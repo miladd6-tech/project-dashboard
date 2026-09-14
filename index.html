@@ -39,10 +39,10 @@
                 </div>
             </div>
 
-            <!-- Action Buttons & Sub-Status Column -->
+            <!-- Action Buttons & Status Details -->
             <div class="flex flex-col items-end gap-1.5">
                 
-                <!-- Action Buttons Row -->
+                <!-- Buttons Row -->
                 <div class="flex items-center gap-2">
                     <!-- دکمه مخفی Input برای آپلود اکسل -->
                     <input type="file" id="manualFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleManualFileUpload(event)" />
@@ -124,12 +124,12 @@
                             <th class="py-3.5 px-4 font-semibold">مدیر پروژه</th>
                             <th class="py-3.5 px-4 font-semibold text-center">پیشرفت برنامه‌ای</th>
                             <th class="py-3.5 px-4 font-semibold text-center">پیشرفت واقعی</th>
-                            <th class="py-3.5 px-4 font-semibold text-center">وضعیت انحراف</th>
-                            <th class="py-3.5 px-4 font-semibold text-center">E.V.M</th>
+                            <th class="py-3.5 px-4 font-semibold text-center">میزان انحراف</th>
+                            <th class="py-3.5 px-4 font-semibold text-center" title="شاخص عملکرد زمانی (Actual / Plan)">E.V.M (SPI)</th>
                         </tr>
                     </thead>
                     <tbody id="projectsTableBody" class="divide-y divide-slate-700/40 text-slate-200">
-                        <!-- داینامیک لود می‌شود -->
+                        <!-- ردیف‌های جدول به صورت داینامیک اضافه می‌شوند -->
                     </tbody>
                 </table>
             </div>
@@ -145,21 +145,20 @@
     <!-- Logic & Data Script -->
     <script>
         const FALLBACK_PROJECTS = [
-            { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, evm: "0.92" },
-            { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, evm: "1.06" },
-            { id: 3, company: "بازرگانی", name: "توسعه بازارهای صادراتی", pm: "مهندس قادری", plan: 40, actual: 32, evm: "0.80" },
-            { id: 4, company: "توسعه صنایع", name: "طرح جامع ارتقای ایمنی", pm: "مهندس کاظمی", plan: 95, actual: 95, evm: "1.00" },
-            { id: 5, company: "پشتیبانی و لجستیک", name: "هوشمندسازی زنجیره تامین", pm: "مهندس نوری", plan: 50, actual: 45, evm: "0.90" }
+            { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, variance: "-7.0", evm: "0.92" },
+            { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, variance: "+4.0", evm: "1.07" },
+            { id: 3, company: "بازرگانی", name: "توسعه بازارهای صادراتی", pm: "مهندس قادری", plan: 40, actual: 32, variance: "-8.0", evm: "0.80" },
+            { id: 4, company: "توسعه صنایع", name: "طرح جامع ارتقای ایمنی", pm: "مهندس کاظمی", plan: 95, actual: 95, variance: "0.0", evm: "1.00" },
+            { id: 5, company: "پشتیبانی و لجستیک", name: "هوشمندسازی زنجیره تامین", pm: "مهندس نوری", plan: 50, actual: 45, variance: "-5.0", evm: "0.90" }
         ];
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // نرمال‌سازی هوشمند درصدها (رفع مشکل مقادیر خام اعشاری اکسل مثل 0.81 یا 1)
+        // نرمال‌سازی هوشمند درصدها (پشتیبانی از اعداد اعشاری خام بین 0 و 1 یا اعداد کامل)
         function normalizePercent(val) {
             if (val === null || val === undefined || val === '') return 0;
             let num = typeof val === 'string' ? parseFloat(val.replace('%', '').trim()) : parseFloat(val);
             if (isNaN(num)) return 0;
-            // اگر عدد بین 0 و 1 باشد (به عنوان مثال 0.85 یا 1) ضربدر 100 می‌شود
             if (num > 0 && num <= 1) {
                 num = num * 100;
             }
@@ -174,16 +173,34 @@
             if (el) el.textContent = `${dateStr} ${timeStr}`;
         }
 
+        // تجزیه و محاسبه هوشمند داده‌ها (محاسبه خودکار واریانس و شاخص EVM/SPI)
         function parseRawData(jsonData) {
-            return jsonData.map((row, idx) => ({
-                id: idx + 1,
-                company: row['شرکت'] || row['Company'] || '-',
-                name: row['نام پروژه'] || row['Name'] || row['پروژه'] || '-',
-                pm: row['مدیر پروژه'] || row['PM'] || '-',
-                plan: normalizePercent(row['برنامه'] ?? row['Plan']),
-                actual: normalizePercent(row['واقعی'] ?? row['Actual']),
-                evm: row['EVM'] || row['E.V.M'] || '-'
-            }));
+            return jsonData.map((row, idx) => {
+                const plan = normalizePercent(row['برنامه'] ?? row['Plan']);
+                const actual = normalizePercent(row['واقعی'] ?? row['Actual']);
+                
+                // محاسبه خودکار واریانس (Actual - Plan)
+                const diff = (actual - plan).toFixed(1);
+                
+                // محاسبه خودکار شاخص EVM / SPI (Actual / Plan)
+                let evmVal = "1.00";
+                if (plan > 0) {
+                    evmVal = (actual / plan).toFixed(2);
+                } else if (actual > 0) {
+                    evmVal = "> 1.00";
+                }
+
+                return {
+                    id: idx + 1,
+                    company: row['شرکت'] || row['Company'] || '-',
+                    name: row['نام پروژه'] || row['Name'] || row['پروژه'] || '-',
+                    pm: row['مدیر پروژه'] || row['PM'] || '-',
+                    plan: plan,
+                    actual: actual,
+                    variance: diff,
+                    evm: evmVal
+                };
+            });
         }
 
         function renderDashboard(projects, statusText = "Connected", statusType = "online") {
@@ -206,15 +223,15 @@
             const total = projects.length;
             const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
             const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
-            const variance = (avgActual - avgPlan).toFixed(1);
+            const totalVariance = (avgActual - avgPlan).toFixed(1);
 
             document.getElementById('kpiTotalProjects').textContent = total;
             document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
             document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
             
             const varEl = document.getElementById('kpiVariance');
-            varEl.textContent = `${variance > 0 ? '+' : ''}${variance}%`;
-            varEl.className = `text-2xl font-black mt-2 ${variance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            varEl.textContent = `${totalVariance > 0 ? '+' : ''}${totalVariance}%`;
+            varEl.className = `text-2xl font-black mt-2 ${totalVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
 
             document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
 
@@ -224,11 +241,21 @@
             projects.forEach((proj, index) => {
                 const planVal = parseFloat(proj.plan) || 0;
                 const actVal = parseFloat(proj.actual) || 0;
-                const diff = (actVal - planVal).toFixed(1);
+                const diff = parseFloat(proj.variance) || 0;
+                const evmNum = parseFloat(proj.evm);
                 
+                // رنگ‌بندی بج انحراف
                 let badgeColor = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
                 if (diff < -5) badgeColor = "bg-rose-500/20 text-rose-400 border border-rose-500/30";
                 else if (diff < 0) badgeColor = "bg-amber-500/20 text-amber-400 border border-amber-500/30";
+
+                // رنگ‌بندی فونت شاخص EVM
+                let evmColorClass = "text-slate-300";
+                if (!isNaN(evmNum)) {
+                    if (evmNum >= 1.0) evmColorClass = "text-emerald-400 font-bold";
+                    else if (evmNum >= 0.85) evmColorClass = "text-amber-400 font-bold";
+                    else evmColorClass = "text-rose-400 font-bold";
+                }
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-700/30 transition duration-150";
@@ -244,7 +271,7 @@
                             ${diff > 0 ? '+' : ''}${diff}%
                         </span>
                     </td>
-                    <td class="py-3 px-4 text-center font-mono text-slate-300">${proj.evm || '-'}</td>
+                    <td class="py-3 px-4 text-center font-mono ${evmColorClass}">${proj.evm}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -259,8 +286,9 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const sheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[sheetName];
+                // همیشه شیت اول را به عنوان خلاصه وضعیت می‌خواند
+                const firstSheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
 
                 if (jsonData && jsonData.length > 0) {
@@ -268,7 +296,7 @@
                     renderDashboard(currentProjects, "Connected", "online");
                 }
             } catch (err) {
-                console.log("استفاده از حافظه دیتای اولیه به دلیل عدم دریافت مستقیم اکسل:", err);
+                console.log("دریافت فایل از سرور با خطا مواجه شد؛ استفاده از داده‌های پیش‌فرض:", err);
                 renderDashboard(currentProjects, "Offline", "offline");
             }
         }
@@ -282,8 +310,8 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
+                    const firstSheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[firstSheetName];
                     const jsonData = XLSX.utils.sheet_to_json(sheet);
 
                     if (jsonData && jsonData.length > 0) {
@@ -291,7 +319,7 @@
                         renderDashboard(currentProjects, "Local File", "local");
                     }
                 } catch (err) {
-                    alert("خطا در خواندن فایل اکسل. لطفاً از فرمت صحیح مطمئن شوید.");
+                    alert("خطا در پردازش فایل اکسل. لطفاً از ساختار فایل مطمئن شوید.");
                 }
             };
             reader.readAsArrayBuffer(file);
