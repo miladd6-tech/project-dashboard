@@ -39,17 +39,31 @@
                 </div>
             </div>
 
-            <!-- Action & Sub-Status Column (Right Side Layout) -->
+            <!-- Action Buttons & Sub-Status Column -->
             <div class="flex flex-col items-end gap-1.5">
-                <!-- دکمه کپسولی Refresh -->
-                <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
-                    <span class="font-sans font-semibold text-xs tracking-wide">Refresh</span>
-                    <svg class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                </button>
+                
+                <!-- Action Buttons Row -->
+                <div class="flex items-center gap-2">
+                    <!-- دکمه مخفی Input برای آپلود اکسل -->
+                    <input type="file" id="manualFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleManualFileUpload(event)" />
 
-                <!-- وضعیت دو خطی: Server و Updated کاملاً بولد و تراز شده -->
+                    <!-- دکمه آیکونی آپلود دستی با تول‌تیپ -->
+                    <button onclick="document.getElementById('manualFileInput').click()" title="آپلود دستی فایل اکسل" class="p-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white transition-all duration-200 border border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                        <svg class="w-4 h-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                    </button>
+
+                    <!-- دکمه کپسولی Refresh -->
+                    <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
+                        <span class="font-sans font-semibold text-xs tracking-wide">Refresh</span>
+                        <svg class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- وضعیت دو خطی: Server و Updated -->
                 <div class="flex flex-col gap-1 text-[10px] text-slate-300 font-mono tracking-tight bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 shadow-inner" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -62,6 +76,7 @@
                         <span id="lastUpdateText" class="text-slate-300">--:--</span>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -129,7 +144,6 @@
 
     <!-- Logic & Data Script -->
     <script>
-        // دیتای پشتیبان اولیه
         const FALLBACK_PROJECTS = [
             { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, evm: "0.92" },
             { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, evm: "1.06" },
@@ -140,7 +154,18 @@
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // به‌روزرسانی برچسب ساعت و تاریخ
+        // نرمال‌سازی هوشمند درصدها (رفع مشکل مقادیر خام اعشاری اکسل مثل 0.81 یا 1)
+        function normalizePercent(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            let num = typeof val === 'string' ? parseFloat(val.replace('%', '').trim()) : parseFloat(val);
+            if (isNaN(num)) return 0;
+            // اگر عدد بین 0 و 1 باشد (به عنوان مثال 0.85 یا 1) ضربدر 100 می‌شود
+            if (num > 0 && num <= 1) {
+                num = num * 100;
+            }
+            return Math.round(num * 10) / 10;
+        }
+
         function updateLastUpdated() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -149,16 +174,33 @@
             if (el) el.textContent = `${dateStr} ${timeStr}`;
         }
 
-        // رندر کردن جدول و کارت‌های KPI
-        function renderDashboard(projects, statusText = "Connected", isOnline = true) {
+        function parseRawData(jsonData) {
+            return jsonData.map((row, idx) => ({
+                id: idx + 1,
+                company: row['شرکت'] || row['Company'] || '-',
+                name: row['نام پروژه'] || row['Name'] || row['پروژه'] || '-',
+                pm: row['مدیر پروژه'] || row['PM'] || '-',
+                plan: normalizePercent(row['برنامه'] ?? row['Plan']),
+                actual: normalizePercent(row['واقعی'] ?? row['Actual']),
+                evm: row['EVM'] || row['E.V.M'] || '-'
+            }));
+        }
+
+        function renderDashboard(projects, statusText = "Connected", statusType = "online") {
             const serverEl = document.getElementById('serverStatusText');
             const dotEl = document.getElementById('statusDot');
+            
             if (serverEl) {
                 serverEl.textContent = statusText;
-                serverEl.className = isOnline ? "text-emerald-400 font-semibold" : "text-amber-400 font-semibold";
+                if (statusType === "online") serverEl.className = "text-emerald-400 font-semibold";
+                else if (statusType === "local") serverEl.className = "text-sky-400 font-semibold";
+                else serverEl.className = "text-amber-400 font-semibold";
             }
             if (dotEl) {
-                dotEl.className = `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`;
+                let dotBg = 'bg-emerald-400 animate-pulse';
+                if (statusType === 'local') dotBg = 'bg-sky-400';
+                else if (statusType === 'offline') dotBg = 'bg-amber-400';
+                dotEl.className = `w-1.5 h-1.5 rounded-full ${dotBg}`;
             }
 
             const total = projects.length;
@@ -210,7 +252,6 @@
             updateLastUpdated();
         }
 
-        // واکشی اکسل از ریپازیتوری
         async function fetchLiveExcel() {
             try {
                 const response = await fetch('dashboard.xlsx?t=' + Date.now());
@@ -223,21 +264,37 @@
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
 
                 if (jsonData && jsonData.length > 0) {
-                    currentProjects = jsonData.map((row, idx) => ({
-                        id: idx + 1,
-                        company: row['شرکت'] || row['Company'] || '-',
-                        name: row['نام پروژه'] || row['Name'] || row['پروژه'] || '-',
-                        pm: row['مدیر پروژه'] || row['PM'] || '-',
-                        plan: row['برنامه'] || row['Plan'] || 0,
-                        actual: row['واقعی'] || row['Actual'] || 0,
-                        evm: row['EVM'] || row['E.V.M'] || '-'
-                    }));
-                    renderDashboard(currentProjects, "Connected", true);
+                    currentProjects = parseRawData(jsonData);
+                    renderDashboard(currentProjects, "Connected", "online");
                 }
             } catch (err) {
                 console.log("استفاده از حافظه دیتای اولیه به دلیل عدم دریافت مستقیم اکسل:", err);
-                renderDashboard(currentProjects, "Offline", false);
+                renderDashboard(currentProjects, "Offline", "offline");
             }
+        }
+
+        function handleManualFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+                    if (jsonData && jsonData.length > 0) {
+                        currentProjects = parseRawData(jsonData);
+                        renderDashboard(currentProjects, "Local File", "local");
+                    }
+                } catch (err) {
+                    alert("خطا در خواندن فایل اکسل. لطفاً از فرمت صحیح مطمئن شوید.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
         function refreshData() {
@@ -246,9 +303,8 @@
             fetchLiveExcel();
         }
 
-        // لود در هنگام بالا آمدن صفحه
         window.addEventListener('DOMContentLoaded', () => {
-            renderDashboard(FALLBACK_PROJECTS, "Connected", true);
+            renderDashboard(FALLBACK_PROJECTS, "Connected", "online");
             fetchLiveExcel();
         });
     </script>
