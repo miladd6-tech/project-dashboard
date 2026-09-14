@@ -30,40 +30,40 @@
     <div class="max-w-7xl mx-auto space-y-6">
 
         <!-- ==================== 1. BRANDED HEADER (#1F4555) ==================== -->
-        <header class="custom-header-bg rounded-2xl p-5 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4 border border-white/10">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <!-- Logo -->
-                <div class="bg-white/90 p-2 rounded-xl shadow flex items-center justify-center shrink-0">
-                    <img src="logo.png" alt="PMO Logo" class="h-12 w-auto object-contain" onerror="this.src='P.M.O.png'; this.onerror=null;" />
-                </div>
-                <div>
-                    <h1 class="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-                        داشبورد پایش سبد پروژه‌ها
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">PMO Live</span>
-                    </h1>
-                    <p class="text-xs text-slate-200/80 mt-0.5">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
-                </div>
+     <header class="bg-[#1F4555] border-b border-slate-700/60 sticky top-0 z-30 shadow-md backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+        
+        <!-- لوگو و عنوان داشبورد -->
+        <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="shrink-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                <img src="logo.png" alt="PMO Logo" class="h-14 md:h-16 w-auto object-contain" />
             </div>
-
-            <!-- Header Controls -->
-            <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-end">
-                <div id="dataSourceBadge" class="text-xs font-medium px-3 py-1.5 rounded-xl bg-black/30 text-slate-200 border border-white/10 flex items-center gap-1.5">
-                    <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    منبع: <span id="dataSourceText" class="text-white font-mono text-[11px]">کش پایدار</span>
-                </div>
-
-                <label class="bg-black/30 hover:bg-black/50 text-slate-200 border border-white/10 text-xs font-semibold py-1.5 px-3 rounded-xl cursor-pointer transition flex items-center gap-1.5 shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    اکسل محلی
-                    <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" />
-                </label>
-
-                <button onclick="syncFromGitHub()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-1.5 px-3.5 rounded-xl transition shadow-md shadow-indigo-600/30 flex items-center gap-1.5">
-                    <svg id="syncIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    بروزرسانی شبکه
-                </button>
+            <div>
+                <h1 class="text-lg md:text-xl font-black tracking-tight text-white flex items-center gap-2">
+                    داشبورد پایش سبد پروژه‌ها
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">PMO Live</span>
+                </h1>
+                <p class="text-xs text-slate-300/80 mt-0.5">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
             </div>
-        </header>
+        </div>
+
+        <!-- ویجت زمان به‌روزرسانی و دکمه‌ها -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="text-xs font-medium px-3 py-1.5 rounded-xl bg-black/25 text-slate-200 border border-white/10 flex items-center gap-2">
+                <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>آخرین به‌روزرسانی:</span>
+                <span id="lastUpdateText" class="text-white font-mono text-[11px]" dir="ltr">--</span>
+            </div>
+            
+            <button onclick="refreshData()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition flex items-center gap-1.5 border border-white/10">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>تازه‌سازی</span>
+            </button>
+        </div>
+
+    </div>
+</header>
+
 
         <!-- ==================== 2. KPI METRICS CARDS ==================== -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
@@ -337,19 +337,19 @@
 
                     if (res.ok) {
                         const buffer = await res.arrayBuffer();
-                        parseAndApplyWorkbook(buffer, 'گیت‌هاب زنده');
+                        parseAndApplyWorkbook(buffer, 'اتصال به دیتا بیس');
                         success = true;
                         break;
                     }
                 } catch (e) {
-                    console.log('امکان اتصال به منبع وجود نداشت:', url);
+                    console.log('امکان اتصال به دیتابیس وجود نداشت:', url);
                 }
             }
 
             syncIcon.classList.remove('animate-spin');
 
             if (!success && !isSilent) {
-                alert('ارتباط با گیت‌هاب برقرار نشد. می‌توانید از دکمه «اکسل محلی» استفاده کنید.');
+                alert('ارتباط با دیتابیس برقرار نشد. می‌توانید از دکمه «اکسل محلی» استفاده کنید.');
             }
         }
 
@@ -382,6 +382,15 @@
                 alert('خطا در خواندن فایل اکسل.');
             }
         }
+        // تابع نمایش تاریخ و ساعت شمسیِ آخرین به‌روزرسانی
+function updateLastUpdated() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    const el = document.getElementById('lastUpdateText');
+    if (el) el.textContent = `${dateStr} - ${timeStr}`;
+}
+
     </script>
 </body>
 </html>
