@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد کنترل پروژه و تحلیل پیشرفت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Vazirmatn', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-600 text-white rounded-xl shadow">
+                    <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">داشبورد مانیتورینگ پیشرفت پروژه‌ها</h1>
+                    <p class="text-xs text-slate-500">تحلیل هوشمند فایل اکسل سازمانی</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span id="activeSheetBadge" class="hidden text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-lg border border-indigo-200"></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- File Upload Area -->
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i data-lucide="file-spreadsheet" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800">بارگذاری فایل اکسل (dashboard.xlsx)</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">پشتیبانی کامل از شیت «ریز اطلاعات» و شیت «امتیاز»</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <label class="cursor-pointer flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-medium rounded-xl shadow-sm transition w-full md:w-auto">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>انتخاب فایل اکسل</span>
+                    <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleFileUpload(event)">
+                </label>
+            </div>
+        </div>
+
+        <div id="fileUploadStatus" class="hidden p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"></div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-400">تعداد پروژه‌ها</span>
+                    <h3 id="kpiTotalProjects" class="text-2xl font-extrabold text-slate-800 mt-1">۰</h3>
+                </div>
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-400">میانگین پیشرفت واقعی (Actual)</span>
+                    <h3 id="kpiAvgActual" class="text-2xl font-extrabold text-indigo-600 mt-1">۰٪</h3>
+                </div>
+                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-400">میانگین پیشرفت برنامه‌ای (Plan)</span>
+                    <h3 id="kpiAvgPlan" class="text-2xl font-extrabold text-slate-700 mt-1">۰٪</h3>
+                </div>
+                <div class="p-3 bg-slate-100 text-slate-600 rounded-xl">
+                    <i data-lucide="calendar-check" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-400">پروژه‌های تکمیل‌شده</span>
+                    <h3 id="kpiCompleted" class="text-2xl font-extrabold text-emerald-600 mt-1">۰</h3>
+                </div>
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Bar Chart: Plan vs Actual -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-600"></i>
+                        مقایسه درصد پیشرفت واقعی (Actual) در برابر برنامه (Plan)
+                    </h3>
+                </div>
+                <div class="relative h-80">
+                    <canvas id="planActualChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Doughnut Chart: Distribution -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+                        وضعیت تحقق اهداف
+                    </h3>
+                </div>
+                <div class="relative h-80 flex items-center justify-center">
+                    <canvas id="statusDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter and Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800">ریز جزئیات پروژه‌ها</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">فیلتر بر اساس نام شرکت و جستجوی عنوان پروژه یا PM</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <label for="companyFilter" class="text-xs text-slate-500">شرکت:</label>
+                        <select id="companyFilter" onchange="filterData()" class="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-xl p-2.5 w-full sm:w-44 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="ALL">همه شرکت‌ها</option>
+                        </select>
+                    </div>
+
+                    <div class="relative w-full sm:w-60">
+                        <input type="text" id="searchInput" oninput="filterData()" placeholder="جستجوی نام پروژه، عنوان، PM..." class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-xs rounded-xl pr-8 pl-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-2.5 pointer-events-none text-slate-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-right text-xs text-slate-600">
+                    <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                        <tr>
+                            <th class="px-5 py-3">#</th>
+                            <th class="px-5 py-3">نام پروژه</th>
+                            <th class="px-5 py-3">شرکت</th>
+                            <th class="px-5 py-3">مدیر پروژه (PM)</th>
+                            <th class="px-5 py-3">برنامه‌ای (Plan)</th>
+                            <th class="px-5 py-3">واقعی (Actual)</th>
+                            <th class="px-5 py-3">مدت (روز)</th>
+                            <th class="px-5 py-3">انحراف (EVM)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                                لطفاً فایل اکسل خود را بارگذاری کنید.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let rawData = [];
+        let filteredData = [];
+        let planActualChartInstance = null;
+        let doughnutChartInstance = null;
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    // انتخاب شیت: اگر «ریز اطلاعات» بود آن را بردارد، وگرنه شیت اول
+                    let targetSheetName = workbook.SheetNames.find(s => s.includes("ریز") || s.includes("اطلاعات")) || workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[targetSheetName];
+                    const rows = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (!rows || rows.length === 0) {
+                        alert("داده‌ای در شیت مورد نظر یافت نشد.");
+                        return;
+                    }
+
+                    // استخراج و نرمال‌سازی داده‌ها از روی ستون‌های اکسل
+                    rawData = rows.map((row, index) => {
+                        // در اکسل شما مقادیر اعشاری مثل 0.28 برای 28% هستند
+                        const parsePct = (val) => {
+                            let n = parseFloat(val) || 0;
+                            if (n > 0 && n <= 1) n = Math.round(n * 100);
+                            return Math.min(100, Math.max(0, n));
+                        };
+
+                        const actualPct = parsePct(row['Actual'] !== undefined ? row['Actual'] : (row['progress'] || 0));
+                        const planPct = parsePct(row['Plan'] !== undefined ? row['Plan'] : actualPct);
+                        const evmVal = parseFloat(row['E.V.M'] !== undefined ? row['E.V.M'] : (row['EVM'] || 0));
+
+                        return {
+                            id: index + 1,
+                            company: String(row['Company'] || 'نامشخص').trim(),
+                            name: String(row['Name'] || row['Title'] || 'بدون نام').trim(),
+                            title: String(row['Title'] || row['Name'] || '').trim(),
+                            pm: String(row['PM'] || '-').trim(),
+                            plan: planPct,
+                            actual: actualPct,
+                            duration: parseInt(row['Duration']) || 0,
+                            evm: (evmVal <= 1 && evmVal > 0) ? Math.round(evmVal * 100) + '٪' : evmVal
+                        };
+                    });
+
+                    // نمایش پیام موفقیت
+                    const statusBadge = document.getElementById('activeSheetBadge');
+                    statusBadge.textContent = `شیت فعال: ${targetSheetName}`;
+                    statusBadge.classList.remove('hidden');
+
+                    const statusDiv = document.getElementById('fileUploadStatus');
+                    statusDiv.textContent = `فایل «${file.name}» با موفقیت لود شد (${rawData.length} پروژه یافت شد).`;
+                    statusDiv.classList.remove('hidden');
+
+                    populateCompanyFilter(rawData);
+                    filterData();
+
+                } catch (err) {
+                    console.error("خطا در پردازش اکسل:", err);
+                    alert("خطایی در خواندن ساختار فایل رخ داد.");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function populateCompanyFilter(data) {
+            const select = document.getElementById('companyFilter');
+            select.innerHTML = '<option value="ALL">همه شرکت‌ها</option>';
+            
+            const companies = [...new Set(data.map(d => d.company))].filter(Boolean);
+            companies.forEach(company => {
+                const opt = document.createElement('option');
+                opt.value = company;
+                opt.textContent = company;
+                select.appendChild(opt);
+            });
+        }
+
+        function filterData() {
+            const selectedCompany = document.getElementById('companyFilter').value;
+            const searchKeyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            filteredData = rawData.filter(item => {
+                const matchCompany = (selectedCompany === "ALL" || item.company === selectedCompany);
+                const matchSearch = item.name.toLowerCase().includes(searchKeyword) ||
+                                    item.title.toLowerCase().includes(searchKeyword) ||
+                                    item.company.toLowerCase().includes(searchKeyword) ||
+                                    item.pm.toLowerCase().includes(searchKeyword);
+                return matchCompany && matchSearch;
+            });
+
+            updateKPIs(filteredData);
+            renderTable(filteredData);
+            renderCharts(filteredData);
+        }
+
+        function updateKPIs(data) {
+            const total = data.length;
+            if (total === 0) {
+                document.getElementById('kpiTotalProjects').textContent = '۰';
+                document.getElementById('kpiAvgActual').textContent = '۰٪';
+                document.getElementById('kpiAvgPlan').textContent = '۰٪';
+                document.getElementById('kpiCompleted').textContent = '۰';
+                return;
+            }
+
+            const sumActual = data.reduce((acc, curr) => acc + curr.actual, 0);
+            const sumPlan = data.reduce((acc, curr) => acc + curr.plan, 0);
+            const completedCount = data.filter(d => d.actual >= 100).length;
+
+            document.getElementById('kpiTotalProjects').textContent = total.toLocaleString('fa-IR');
+            document.getElementById('kpiAvgActual').textContent = `${Math.round(sumActual / total).toLocaleString('fa-IR')}٪`;
+            document.getElementById('kpiAvgPlan').textContent = `${Math.round(sumPlan / total).toLocaleString('fa-IR')}٪`;
+            document.getElementById('kpiCompleted').textContent = completedCount.toLocaleString('fa-IR');
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('projectsTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="px-6 py-8 text-center text-slate-400">هیچ رکوردی یافت نشد.</td></tr>`;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <td class="px-5 py-3.5 text-slate-400 font-mono">${(index + 1).toLocaleString('fa-IR')}</td>
+                    <td class="px-5 py-3.5">
+                        <div class="font-bold text-slate-800">${item.name}</div>
+                        <div class="text-[11px] text-slate-400 max-w-xs truncate">${item.title}</div>
+                    </td>
+                    <td class="px-5 py-3.5 font-medium text-slate-700">${item.company}</td>
+                    <td class="px-5 py-3.5 text-slate-600">${item.pm}</td>
+                    <td class="px-5 py-3.5 font-medium text-slate-500">${item.plan.toLocaleString('fa-IR')}٪</td>
+                    <td class="px-5 py-3.5">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 bg-slate-200 rounded-full h-2 overflow-hidden">
+                                <div class="bg-indigo-600 h-2 rounded-full" style="width: ${item.actual}%"></div>
+                            </div>
+                            <span class="font-bold text-indigo-700">${item.actual.toLocaleString('fa-IR')}٪</span>
+                        </div>
+                    </td>
+                    <td class="px-5 py-3.5 text-slate-500">${item.duration > 0 ? item.duration.toLocaleString('fa-IR') : '-'}</td>
+                    <td class="px-5 py-3.5">
+                        <span class="px-2 py-0.5 rounded text-[11px] font-mono ${item.evm !== 0 && item.evm !== '0' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'}">
+                            ${item.evm}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderCharts(data) {
+            // Chart 1: Bar Chart (Plan vs Actual)
+            const ctxBar = document.getElementById('planActualChart').getContext('2d');
+            const labels = data.map(d => d.name.length > 15 ? d.name.substring(0, 15) + '...' : d.name);
+            const actualValues = data.map(d => d.actual);
+            const planValues = data.map(d => d.plan);
+
+            if (planActualChartInstance) planActualChartInstance.destroy();
+
+            planActualChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'پیشرفت واقعی (Actual)',
+                            data: actualValues,
+                            backgroundColor: '#6366f1',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'برنامه (Plan)',
+                            data: planValues,
+                            backgroundColor: '#cbd5e1',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: val => val + '٪' }
+                        },
+                        x: {
+                            ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'Vazirmatn' } } }
+                    }
+                }
+            });
+
+            // Chart 2: Doughnut Chart
+            const ctxDoughnut = document.getElementById('statusDoughnutChart').getContext('2d');
+            const completed = data.filter(d => d.actual >= 100).length;
+            const inProgress = data.filter(d => d.actual > 0 && d.actual < 100).length;
+            const notStarted = data.filter(d => d.actual === 0).length;
+
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
+
+            doughnutChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['تکمیل شده (۱۰۰٪)', 'در جریان (۱ تا ۹۹٪)', 'شروع نشده (۰٪)'],
+                    datasets: [{
+                        data: [completed, inProgress, notStarted],
+                        backgroundColor: ['#10b981', '#6366f1', '#e2e8f0'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 14, font: { family: 'Vazirmatn' } } }
+                    },
+                    cutout: '68%'
+                }
+            });
+        }
+    </script>
+</body>
+</html>
