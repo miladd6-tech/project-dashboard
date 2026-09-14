@@ -23,50 +23,46 @@
 
     <!-- Header Section -->
     <header class="bg-[#1F4555] border-b border-slate-700/60 sticky top-0 z-30 shadow-lg backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
             
-           <!-- Logo & Title -->
-<div class="flex items-center gap-4 w-full md:w-auto">
-    <div class="shrink-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-        <!-- اضافه شدن ?v=2 برای دور زدن کش + افزایش ارتفاع به h-20 md:h-24 و max-h -->
-        <img 
-            src="logo.png?v=2" 
-            alt="Deka PMO Logo" 
-            class="h-20 md:h-24 w-auto max-w-[280px] object-contain transition-all duration-200 hover:scale-105" 
-            onerror="this.style.display='none'" 
-        />
-    </div>
-    <div>
-        <h1 class="text-lg md:text-xl font-black tracking-tight text-white flex items-center gap-2">
-            داشبورد پایش سبد پروژه‌ها
-            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">PMO Live</span>
-        </h1>
-        <p class="text-xs text-slate-300/80 mt-0.5">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
-    </div>
-</div>
-
-            <!-- Controls & Server Status -->
-            <div class="flex items-center gap-2.5 flex-wrap">
-                <!-- سرور و وضعیت دیتا بیس -->
-                <div class="text-xs font-medium px-3 py-1.5 rounded-xl bg-black/30 text-slate-200 border border-white/10 flex items-center gap-1.5">
-                    <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>سرور:</span>
-                    <span id="serverStatusText" class="text-emerald-300 font-semibold flex items-center gap-1">✓ دیتا بیس</span>
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-4">
+                <div class="shrink-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
+                    <!-- ?v=3 برای شکستن کش + سایز درشت و خوانا -->
+                    <img src="logo.png?v=3" alt="PMO Logo" class="h-16 md:h-20 w-auto object-contain transition-all duration-200" onerror="this.style.display='none'" />
                 </div>
-
-                <!-- آخرین به‌روزرسانی -->
-                <div class="text-xs font-medium px-3 py-1.5 rounded-xl bg-black/20 text-slate-300 border border-white/10 flex items-center gap-1.5">
-                    <span>به‌روزرسانی:</span>
-                    <span id="lastUpdateText" class="text-white font-mono text-[11px]" dir="ltr">--</span>
+                <div>
+                    <h1 class="text-lg md:text-xl font-black tracking-tight text-white flex items-center gap-2">
+                        داشبورد پایش سبد پروژه‌ها
+                        <span class="text-[11px] font-sans font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">PMO Live</span>
+                    </h1>
+                    <p class="text-xs text-slate-300/80 mt-0.5">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
                 </div>
-                
-                <!-- دکمه Refresh -->
-<button onclick="refreshData()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition flex items-center gap-1.5 border border-white/10">
-    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-    </svg>
-    <span>Refresh</span>
-</button>
+            </div>
+
+            <!-- Action & Sub-Status Column (Right Side Layout) -->
+            <div class="flex flex-col items-end gap-1.5">
+                <!-- دکمه کپسولی Refresh مشابه عکس ارسالی -->
+                <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
+                    <span class="font-sans font-semibold text-xs tracking-wide">Refresh</span>
+                    <svg class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+
+                <!-- وضعیت اتصال و آخرین به‌روزرسانی (کاملاً انگلیسی، فونت ریز و زیر دکمه) -->
+                <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono tracking-tight bg-black/30 px-2.5 py-1 rounded-md border border-white/5 shadow-inner" dir="ltr">
+                    <div class="flex items-center gap-1.5">
+                        <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-slate-400">Server:</span>
+                        <span id="serverStatusText" class="text-emerald-400 font-semibold">Connected</span>
+                    </div>
+                    <span class="text-slate-600">|</span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-slate-400">Updated:</span>
+                        <span id="lastUpdateText" class="text-slate-300 font-mono">--:--</span>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -119,7 +115,7 @@
                         </tr>
                     </thead>
                     <tbody id="projectsTableBody" class="divide-y divide-slate-700/40 text-slate-200">
-                        <!-- ردیف‌ها به صورت داینامیک اضافه می‌شوند -->
+                        <!-- داینامیک پر می‌شود -->
                     </tbody>
                 </table>
             </div>
@@ -128,13 +124,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        داشبورد اختصاصی مدیریت سبد پروژه‌ها (PMO) – طراحی و پیاده‌سازی سازمانی
+    <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500 font-mono">
+        DEKA PMO Portfolio Dashboard • System Operational
     </footer>
 
     <!-- Logic & Data Script -->
     <script>
-        // داده‌های پیش‌فرض دیتابیس (Zero Loading Delay)
+        // دیتای پشتیبان پیش‌فرض برای لود آنی
         const FALLBACK_PROJECTS = [
             { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, evm: "0.92" },
             { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, evm: "1.06" },
@@ -145,22 +141,29 @@
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // به‌روزرسانی تاریخ و ساعت شمسی
+        // ثبت ساعت و تاریخ شمسی با فرمت مرتب انگلیسی/مونو
         function updateLastUpdated() {
             const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             const dateStr = now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
             const el = document.getElementById('lastUpdateText');
-            if (el) el.textContent = `${dateStr} - ${timeStr}`;
+            if (el) el.textContent = `${dateStr} ${timeStr}`;
         }
 
         // رندر کردن جدول و KPIها
-        function renderDashboard(projects, statusText = "✓ دیتا بیس") {
-            // سرور استاتوس
+        function renderDashboard(projects, statusText = "Connected", isOnline = true) {
+            // آپدیت وضعیت سرور به انگلیسی
             const serverEl = document.getElementById('serverStatusText');
-            if (serverEl) serverEl.textContent = statusText;
+            const dotEl = document.getElementById('statusDot');
+            if (serverEl) {
+                serverEl.textContent = statusText;
+                serverEl.className = isOnline ? "text-emerald-400 font-semibold" : "text-amber-400 font-semibold";
+            }
+            if (dotEl) {
+                dotEl.className = `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`;
+            }
 
-            // محاسبه KPIها
+            // محاسبات KPI
             const total = projects.length;
             const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
             const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
@@ -176,7 +179,7 @@
 
             document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
 
-            // رندر ردیف‌های جدول
+            // رندر جدول
             const tbody = document.getElementById('projectsTableBody');
             tbody.innerHTML = '';
 
@@ -211,17 +214,14 @@
             updateLastUpdated();
         }
 
-        // دریافت آنلاین داده از فایل اکسل در دیتا بیس
+        // واکشی داده از اکسل مخزن
         async function fetchLiveExcel() {
             try {
-                // نام فایل اکسل در ریپازیتوری
                 const response = await fetch('dashboard.xlsx?t=' + Date.now());
-                if (!response.ok) throw new Error('Network error');
+                if (!response.ok) throw new Error('Excel not found');
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                
-                // خواندن شیت اول یا شیت ریز اطلاعات
                 const sheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
@@ -236,25 +236,24 @@
                         actual: row['واقعی'] || row['Actual'] || 0,
                         evm: row['EVM'] || row['E.V.M'] || '-'
                     }));
-                    renderDashboard(currentProjects, "✓ دیتا بیس همگام");
+                    renderDashboard(currentProjects, "Connected", true);
                 }
             } catch (err) {
-                console.log("دیتا بیس در دسترس نیست یا اکسل خوانده نشد؛ نمایش داده‌های آماده.", err);
-                // در صورت قطعی اینترنت، همان داده‌های پیش‌فرض لود باقی می‌ماند
-                renderDashboard(currentProjects, "✓ دیتا بیس آفلاین");
+                console.log("استفاده از حافظه کش به دلیل عدم واکشی فایل زنده:", err);
+                renderDashboard(currentProjects, "Offline", false);
             }
         }
 
         function refreshData() {
             const statusEl = document.getElementById('serverStatusText');
-            if (statusEl) statusEl.textContent = "در حال دریافت...";
+            if (statusEl) statusEl.textContent = "Syncing...";
             fetchLiveExcel();
         }
 
-        // اجرای بلادرنگ در شروع صفحه
+        // راه‌اندازی اولیه
         window.addEventListener('DOMContentLoaded', () => {
-            renderDashboard(FALLBACK_PROJECTS, "✓ دیتا بیس");
-            fetchLiveExcel(); // تلاش برای خواندن نسخه جدید فایل اکسل
+            renderDashboard(FALLBACK_PROJECTS, "Connected", true);
+            fetchLiveExcel();
         });
     </script>
 </body>
