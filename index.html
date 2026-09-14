@@ -140,4 +140,154 @@
                             <th class="py-3.5 px-4 font-semibold">ردیف<div class="text-[9px] font-mono font-normal opacity-70">(Row)</div></th>
                             <th class="py-3.5 px-4 font-semibold">شرکت<div class="text-[9px] font-mono font-normal opacity-70">(Company)</div></th>
                             <th class="py-3.5 px-4 font-semibold">نام پروژه<div class="text-[9px] font-mono font-normal opacity-70">(Project Name)</div></th>
-                            <th class="py-3.5 px-4 font-semibold">مدیر پروژه<div class="text-[9px] font
+                            <th class="py-3.5 px-4 font-semibold">مدیر پروژه<div class="text-[9px] font-mono font-normal opacity-70">(Project Manager)</div></th>
+                            <th class="py-3.5 px-4 font-semibold text-center">پیشرفت برنامه‌ای<div class="text-[9px] font-mono font-normal opacity-70">(Planned Progress)</div></th>
+                            <th class="py-3.5 px-4 font-semibold text-center">پیشرفت واقعی<div class="text-[9px] font-mono font-normal opacity-70">(Actual Progress)</div></th>
+                            <th class="py-3.5 px-4 font-semibold text-center">میزان انحراف<div class="text-[9px] font-mono font-normal opacity-70">(Variance)</div></th>
+                            <th class="py-3.5 px-4 font-semibold text-center">شاخص بازدهی زمانی<div class="text-[9px] font-mono font-normal opacity-70">(E.V.M / SPI)</div></th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTableBody" class="divide-y divide-white/40 dark:divide-slate-700/40 text-slate-700 dark:text-slate-200">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Logic Remains the Same -->
+    <script>
+        const FALLBACK_PROJECTS = [
+            { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, variance: "-7.0", evm: "0.92" },
+            { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, variance: "+4.0", evm: "1.07" },
+            { id: 3, company: "بازرگانی", name: "توسعه بازارهای صادراتی", pm: "مهندس قادری", plan: 40, actual: 32, variance: "-8.0", evm: "0.80" },
+            { id: 4, company: "توسعه صنایع", name: "طرح جامع ارتقای ایمنی", pm: "مهندس کاظمی", plan: 95, actual: 95, variance: "0.0", evm: "1.00" },
+            { id: 5, company: "پشتیبانی و لجستیک", name: "هوشمندسازی زنجیره تامین", pm: "مهندس نوری", plan: 50, actual: 45, variance: "-5.0", evm: "0.90" }
+        ];
+
+        let currentProjects = [...FALLBACK_PROJECTS];
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function normalizePercent(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            let num = typeof val === 'string' ? parseFloat(val.replace('%', '').trim()) : parseFloat(val);
+            if (isNaN(num)) return 0;
+            if (num > 0 && num <= 1) { num = num * 100; }
+            return Math.round(num * 10) / 10;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const dateStr = now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const el = document.getElementById('lastUpdateText');
+            if (el) el.textContent = `${dateStr} ${timeStr}`;
+        }
+
+        function parseRawData(jsonData) {
+            return jsonData.map((row, idx) => {
+                const plan = normalizePercent(row['برنامه'] ?? row['Plan']);
+                const actual = normalizePercent(row['واقعی'] ?? row['Actual']);
+                const diff = (actual - plan).toFixed(1);
+                let evmVal = "1.00";
+                if (plan > 0) { evmVal = (actual / plan).toFixed(2); } else if (actual > 0) { evmVal = "> 1.00"; }
+                return { id: idx + 1, company: row['شرکت'] || row['Company'] || '-', name: row['نام پروژه'] || row['Name'] || '-', pm: row['مدیر پروژه'] || row['PM'] || '-', plan, actual, variance: diff, evm: evmVal };
+            });
+        }
+
+        function renderDashboard(projects, statusText = "Connected", statusType = "online") {
+            const serverEl = document.getElementById('serverStatusText');
+            const dotEl = document.getElementById('statusDot');
+            if (serverEl) {
+                serverEl.textContent = statusText;
+                serverEl.className = statusType === "online" ? "text-emerald-600 dark:text-emerald-400 font-semibold" : (statusType === "local" ? "text-sky-600 dark:text-sky-400 font-semibold" : "text-amber-600 dark:text-amber-400 font-semibold");
+            }
+            if (dotEl) dotEl.className = `w-1.5 h-1.5 rounded-full ${statusType === 'online' ? 'bg-emerald-500 animate-pulse' : (statusType === 'local' ? 'bg-sky-500' : 'bg-amber-500')}`;
+
+            const total = projects.length;
+            const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
+            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
+            const totalVariance = (avgActual - avgPlan).toFixed(1);
+            const overallEvm = avgPlan > 0 ? (avgActual / avgPlan).toFixed(2) : "1.00";
+
+            document.getElementById('kpiTotalProjects').textContent = total;
+            document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
+            document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
+            
+            const varEl = document.getElementById('kpiVariance');
+            varEl.textContent = `${totalVariance > 0 ? '+' : ''}${totalVariance}%`;
+            varEl.className = `text-2xl font-black mt-1 ${totalVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
+
+            const evmEl = document.getElementById('kpiEvm');
+            evmEl.textContent = overallEvm;
+            const evmNum = parseFloat(overallEvm);
+            evmEl.className = `text-2xl font-black mt-1 ${evmNum >= 1.0 ? 'text-emerald-600 dark:text-emerald-400' : (evmNum >= 0.85 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400')}`;
+
+            document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
+            const tbody = document.getElementById('projectsTableBody');
+            tbody.innerHTML = '';
+            projects.forEach((proj, index) => {
+                const diff = parseFloat(proj.variance) || 0;
+                const evmNum = parseFloat(proj.evm);
+                let badgeColor = diff < -5 ? "bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30" : (diff < 0 ? "bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30" : "bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30");
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/50 dark:hover:bg-slate-700/30 transition duration-150";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-mono text-slate-400 dark:text-slate-400">${index + 1}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800 dark:text-white">${proj.company}</td>
+                    <td class="py-3 px-4">${proj.name}</td>
+                    <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${proj.pm}</td>
+                    <td class="py-3 px-4 text-center font-mono text-blue-600 dark:text-blue-300">${proj.plan}%</td>
+                    <td class="py-3 px-4 text-center font-mono text-emerald-600 dark:text-emerald-300">${proj.actual}%</td>
+                    <td class="py-3 px-4 text-center"><span class="px-2.5 py-0.5 text-[11px] rounded-full font-mono ${badgeColor}">${diff > 0 ? '+' : ''}${diff}%</span></td>
+                    <td class="py-3 px-4 text-center font-mono ${evmNum >= 1 ? 'text-emerald-600' : (evmNum >= 0.85 ? 'text-amber-600' : 'text-rose-600')} dark:text-slate-300">${proj.evm}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateLastUpdated();
+        }
+
+        async function fetchLiveExcel() {
+            try {
+                const response = await fetch('dashboard.xlsx?t=' + Date.now());
+                if (!response.ok) throw new Error('Excel not found');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                if (jsonData && jsonData.length > 0) { currentProjects = parseRawData(jsonData); renderDashboard(currentProjects, "Connected", "online"); }
+            } catch (err) { renderDashboard(currentProjects, "Offline", "offline"); }
+        }
+
+        function handleManualFileUpload(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                currentProjects = parseRawData(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]));
+                renderDashboard(currentProjects, "Local File", "local");
+            };
+            reader.readAsArrayBuffer(event.target.files[0]);
+        }
+
+        function refreshData() {
+            document.getElementById('serverStatusText').textContent = "Syncing...";
+            fetchLiveExcel();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderDashboard(FALLBACK_PROJECTS, "Connected", "online");
+            fetchLiveExcel();
+        });
+    </script>
+</body>
+</html>
