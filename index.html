@@ -3,330 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داشبورد مدیریت پروژه</title>
-    <!-- Tailwind CSS CDN -->
+    <title>داشبورد مدیریت و کنترل پروژه - دکا</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS (XLSX) CDN -->
+    <!-- SheetJS (XLSX) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Chart.js CDN -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Vazirmatn Font -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+        }
+        .custom-header-bg {
+            background-color: #1F4555;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 p-4 md:p-6">
+<body class="min-h-screen text-slate-100 p-4 md:p-8">
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-7xl mx-auto space-y-8">
 
-        <!-- Header -->
-        <header class="bg-white shadow rounded-lg p-5 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">داشبورد جامع مدیریت پروژه‌ها</h1>
-                <p class="text-sm text-gray-500 mt-1">نمایش آنلاین وضعیت و پیشرفت پروژه‌ها</p>
+        <!-- ==================== 1. BRANDED HEADER (#1F4555) ==================== -->
+        <header class="custom-header-bg rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6 border border-white/10">
+            <div class="flex items-center gap-5 w-full md:w-auto">
+                <!-- Logo Container -->
+                <div class="bg-white/90 p-2.5 rounded-xl shadow-lg flex items-center justify-center shrink-0">
+                    <img src="logo.png" alt="DEKA PMO Logo" class="h-14 w-auto object-contain" onerror="this.src='https://via.placeholder.com/150x50?text=DEKA+PMO'" />
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                        داشبورد پایش سبد پروژه‌ها
+                        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">Executive</span>
+                    </h1>
+                    <p class="text-sm text-slate-200/80 mt-1">دفتر مدیریت پروژه (PMO) – معاونت استراتژی</p>
+                </div>
             </div>
-            
-            <div class="flex flex-wrap items-center gap-3">
-                <span id="lastUpdatedBadge" class="hidden bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-blue-200">
-                    آخرین به‌روزرسانی: <span id="lastUpdatedTime">-</span>
-                </span>
 
-                <!-- Manual Upload -->
-                <label class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-sm font-semibold py-2 px-4 rounded cursor-pointer transition">
-                    آپلود اکسل محلی
+            <!-- Action Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+                <div id="lastUpdatedBadge" class="hidden text-xs font-medium px-3.5 py-2 rounded-xl bg-black/30 text-slate-200 border border-white/10 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    بروزرسانی: <span id="lastUpdatedTime" class="text-white font-mono">-</span>
+                </div>
+
+                <label class="bg-black/30 hover:bg-black/50 text-slate-200 border border-white/10 text-xs font-semibold py-2 px-3.5 rounded-xl cursor-pointer transition flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    اکسل محلی
                     <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" />
                 </label>
 
-                <button id="refreshBtn" onclick="loadCentralData()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-4 rounded transition flex items-center gap-1">
+                <button onclick="loadCentralData()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold py-2 px-4 rounded-xl transition shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    بروزرسانی داده‌ها
+                    همگام‌سازی
                 </button>
             </div>
         </header>
 
         <!-- Loading State -->
-        <div id="loadingState" class="bg-white p-12 rounded-lg shadow text-center">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-3"></div>
-            <p class="text-gray-600 font-medium">در حال دریافت داده‌های پروژه...</p>
+        <div id="loadingState" class="glass-card p-16 rounded-2xl shadow-xl text-center">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent mb-4"></div>
+            <p class="text-slate-300 font-medium text-base">در حال بارگذاری و تحلیل ساختار پروژه‌ها...</p>
         </div>
 
-        <!-- Dashboard Content -->
-        <div id="dashboardContent" class="hidden space-y-6">
+        <!-- Main Dashboard Wrapper -->
+        <div id="dashboardContent" class="hidden space-y-8">
 
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-lg shadow border-r-4 border-blue-500">
-                    <div class="text-sm font-medium text-gray-500">کل پروژه‌ها</div>
-                    <div id="totalProjectsCount" class="text-2xl font-bold text-gray-800 mt-2">0</div>
-                </div>
-                <div class="bg-white p-5 rounded-lg shadow border-r-4 border-indigo-500">
-                    <div class="text-sm font-medium text-gray-500">میانگین برنامه‌ای (Plan)</div>
-                    <div id="avgPlanProgress" class="text-2xl font-bold text-indigo-600 mt-2">0%</div>
-                </div>
-                <div class="bg-white p-5 rounded-lg shadow border-r-4 border-green-500">
-                    <div class="text-sm font-medium text-gray-500">میانگین واقعی (Actual)</div>
-                    <div id="avgActualProgress" class="text-2xl font-bold text-green-600 mt-2">0%</div>
-                </div>
-                <div class="bg-white p-5 rounded-lg shadow border-r-4 border-amber-500">
-                    <div class="text-sm font-medium text-gray-500">انحراف میانگین</div>
-                    <div id="totalVariance" class="text-2xl font-bold mt-2">0%</div>
-                </div>
-            </div>
-
-            <!-- Chart -->
-            <div class="bg-white p-5 rounded-lg shadow">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">نمودار مقایسه پیشرفت پروژه‌ها</h2>
-                <div class="relative h-80 w-full">
-                    <canvas id="progressChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="bg-white shadow rounded-lg overflow-hidden">
-                <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-gray-800">ریز اطلاعات پروژه‌ها</h2>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-right">
-                        <thead class="bg-gray-50 text-gray-700 text-xs font-bold uppercase">
-                            <tr>
-                                <th class="px-4 py-3">شرکت</th>
-                                <th class="px-4 py-3">عنوان پروژه</th>
-                                <th class="px-4 py-3">مدیر پروژه</th>
-                                <th class="px-4 py-3">برنامه‌ای</th>
-                                <th class="px-4 py-3">واقعی</th>
-                                <th class="px-4 py-3">انحراف</th>
-                                <th class="px-4 py-3">E.V.M</th>
-                            </tr>
-                        </thead>
-                        <tbody id="projectsTableBody" class="bg-white divide-y divide-gray-200 text-sm">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // Sources: jsDelivr CDN followed by GitHub Raw
-        const CENTRAL_EXCEL_URLS = [
-            'https://cdn.jsdelivr.net/gh/miladd6-tech/project-dashboard@main/dashboard.xlsx',
-            'https://raw.githubusercontent.com/miladd6-tech/project-dashboard/main/dashboard.xlsx'
-        ];
-
-        let chartInstance = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCentralData();
-            document.getElementById('excelFileInput').addEventListener('change', handleFileUpload);
-        });
-
-        async function loadCentralData() {
-            showLoading(true);
-            let loaded = false;
-
-            for (const url of CENTRAL_EXCEL_URLS) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
-                    const res = await fetch(url + '?nocache=' + Date.now(), { signal: controller.signal });
-                    clearTimeout(timeoutId);
-
-                    if (res.ok) {
-                        const buffer = await res.arrayBuffer();
-                        processWorkbookData(buffer, 'سرور مرکزی');
-                        loaded = true;
-                        break;
-                    }
-                } catch (e) {
-                    console.warn('تلاش ناموفق برای منبع:', url, e);
-                }
-            }
-
-            if (!loaded) {
-                showLoading(false);
-                alert('دریافت خودکار فایل اکسل انجام نشد. لطفاً از دکمه «آپلود اکسل محلی» فایل dashboard.xlsx را انتخاب نمایید.');
-            }
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            showLoading(true);
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                processWorkbookData(e.target.result, 'آپلود دستی');
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function processWorkbookData(arrayBuffer, sourceName) {
-            try {
-                const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+            <!-- ==================== 2. KPI METRICS CARDS ==================== -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 
-                // Select first sheet or specific "ریز اطلاعات" sheet
-                const sheetName = workbook.SheetNames.includes('ریز اطلاعات') ? 'ریز اطلاعات' : workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                <!-- Card 1: Total Projects -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-slate-600 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">کل پروژه‌ها</p>
+                            <h3 id="totalProjectsCount" class="text-3xl font-extrabold text-white mt-2">0</h3>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-800/80 text-slate-300 border border-slate-700/50">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">پروژه‌های تحت پایش سازمان</div>
+                </div>
 
-                const projects = parseProjectData(jsonData);
-                if (projects.length === 0) {
-                    throw new Error('داده‌ای در شیت یافت نشد');
-                }
+                <!-- Card 2: Average Plan -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-slate-600 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">میانگین برنامه (Plan)</p>
+                            <h3 id="avgPlanProgress" class="text-3xl font-extrabold text-indigo-400 mt-2">0%</h3>
+                        </div>
+                        <div class="p-3 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">تعهد انباشته زمانی</div>
+                </div>
 
-                renderDashboard(projects);
+                <!-- Card 3: Average Actual -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-slate-600 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">میانگین واقعی (Actual)</p>
+                            <h3 id="avgActualProgress" class="text-3xl font-extrabold text-emerald-400 mt-2">0%</h3>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-400">پیشرفت فیزیکی محقق‌شده</div>
+                </div>
 
-                const now = new Date();
-                const persianDate = new Intl.DateTimeFormat('fa-IR', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short'
-                }).format(now);
+                <!-- Card 4: Variance / Deviation -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-slate-600 transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">انحراف میانگین (Variance)</p>
+                            <h3 id="totalVariance" class="text-3xl font-extrabold mt-2">0%</h3>
+                        </div>
+                        <div id="varianceIconBox" class="p-3 rounded-xl bg-slate-800 text-slate-400 border border-slate-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </div>
+                    </div>
+                    <div id="varianceSubtext" class="mt-3 text-xs text-slate-400">فاصله از خط مبنا</div>
+                </div>
 
-                document.getElementById('lastUpdatedTime').textContent = `${persianDate} (${sourceName})`;
-                document.getElementById('lastUpdatedBadge').classList.remove('hidden');
+                <!-- Card 5: Health Distribution -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden group hover:border-slate-600 transition">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">سلامت سبد پروژه‌ها</p>
+                    <div class="space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-1.5 text-emerald-400 font-medium">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> جلوتر یا منطبق
+                            </span>
+                            <span id="countAheadOrOnTrack" class="font-bold text-white font-mono">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="flex items-center gap-1.5 text-rose-400 font-medium">
+                                <span class="w-2 h-2 rounded-full bg-rose-500"></span> دارای تاخیر
+                            </span>
+                            <span id="countDelayed" class="font-bold text-white font-mono">0</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-1.5 mt-3 overflow-hidden flex">
+                        <div id="healthBarGreen" class="bg-emerald-500 h-full transition-all duration-500" style="width: 50%"></div>
+                        <div id="healthBarRed" class="bg-rose-500 h-full transition-all duration-500" style="width: 50%"></div>
+                    </div>
+                </div>
 
-                showLoading(false);
-                document.getElementById('dashboardContent').classList.remove('hidden');
-            } catch (error) {
-                console.error(error);
-                showLoading(false);
-                alert('خطا در پردازش اطلاعات فایل اکسل!');
-            }
-        }
+            </div>
 
-        function parseProjectData(rawData) {
-            return rawData.map(row => {
-                const company = row['Company'] || row['شرکت'] || '-';
-                const name = row['Title'] || row['Name'] || row['نام پروژه'] || row['پروژه'] || 'بدون عنوان';
-                const pm = row['PM'] || row['مدیر پروژه'] || '-';
-                const evm = row['E.V.M'] !== undefined && row['E.V.M'] !== '' ? Number(row['E.V.M']).toFixed(2) : '-';
-
-                let planVal = parseFloat(row['Plan'] || row['برنامه'] || 0);
-                let actualVal = parseFloat(row['Actual'] || row['واقعی'] || 0);
-
-                if (planVal <= 1 && planVal > 0) planVal = planVal * 100;
-                if (actualVal <= 1 && actualVal > 0) actualVal = actualVal * 100;
-
-                planVal = Math.round(planVal * 10) / 10;
-                actualVal = Math.round(actualVal * 10) / 10;
-                const variance = Math.round((actualVal - planVal) * 10) / 10;
-
-                return {
-                    company: String(company).trim(),
-                    name: String(name).trim(),
-                    pm: String(pm).trim(),
-                    plan: planVal,
-                    actual: actualVal,
-                    variance: variance,
-                    evm: evm
-                };
-            }).filter(p => p.name !== 'بدون عنوان' && p.name !== '');
-        }
-
-        function renderDashboard(projects) {
-            // Stats
-            document.getElementById('totalProjectsCount').textContent = projects.length;
-            
-            const totalPlan = projects.reduce((acc, p) => acc + p.plan, 0);
-            const totalActual = projects.reduce((acc, p) => acc + p.actual, 0);
-            
-            const avgPlan = projects.length ? (totalPlan / projects.length).toFixed(1) : 0;
-            const avgActual = projects.length ? (totalActual / projects.length).toFixed(1) : 0;
-            const varianceTotal = (avgActual - avgPlan).toFixed(1);
-
-            document.getElementById('avgPlanProgress').textContent = `${avgPlan}%`;
-            document.getElementById('avgActualProgress').textContent = `${avgActual}%`;
-            
-            const varElem = document.getElementById('totalVariance');
-            varElem.textContent = `${varianceTotal > 0 ? '+' : ''}${varianceTotal}%`;
-            varElem.className = `text-2xl font-bold mt-2 ${varianceTotal >= 0 ? 'text-green-600' : 'text-red-600'}`;
-
-            // Table
-            const tableBody = document.getElementById('projectsTableBody');
-            tableBody.innerHTML = '';
-
-            projects.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 transition';
-                tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium text-gray-500">${p.company}</td>
-                    <td class="px-4 py-3 font-semibold text-gray-800">${p.name}</td>
-                    <td class="px-4 py-3 text-gray-600">${p.pm}</td>
-                    <td class="px-4 py-3 text-indigo-600 font-medium">${p.plan}%</td>
-                    <td class="px-4 py-3 text-green-600 font-bold">${p.actual}%</td>
-                    <td class="px-4 py-3 ${p.variance >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
-                        ${p.variance > 0 ? '+' : ''}${p.variance}%
-                    </td>
-                    <td class="px-4 py-3 text-gray-700 font-mono">${p.evm}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
-
-            // Chart
-            renderChart(projects);
-        }
-
-        function renderChart(projects) {
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: projects.map(p => p.name.length > 25 ? p.name.substring(0, 25) + '...' : p.name),
-                    datasets: [
-                        {
-                            label: 'پیشرفت برنامه‌ای (Plan %)',
-                            data: projects.map(p => p.plan),
-                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
-                            borderColor: 'rgb(99, 102, 241)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'پیشرفت واقعی (Actual %)',
-                            data: projects.map(p => p.actual),
-                            backgroundColor: 'rgba(34, 197, 94, 0.75)',
-                            borderColor: 'rgb(34, 197, 94)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: value => value + '%'
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: context => `${context.dataset.label}: ${context.raw}%`
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function showLoading(show) {
-            document.getElementById('loadingState').style.display = show ? 'block' : 'none';
-            if (show) {
-                document.getElementById('dashboardContent').classList.add('hidden');
-            }
-        }
-    </script>
-</body>
-</html>
+            <!-- Temporary Section for Table -->
+            <div class="glass-card p-6 rounded-2xl
