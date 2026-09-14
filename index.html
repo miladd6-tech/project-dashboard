@@ -24,8 +24,11 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white bg-slate-50 dark:bg-[#0f172a] text-slate-800 dark:text-fuchsia-50 transition-colors duration-300">
 
-    <!-- Header Section -->
-    <header class="bg-white/90 dark:bg-[#1F4555] border-b border-slate-200/80 dark:border-slate-700/60 sticky top-0 z-30 shadow-sm dark:shadow-lg backdrop-blur-md transition-colors duration-300">
+    <!-- Header Section (Glassmorphism Effect Applied) -->
+    <header class="sticky top-0 z-30 transition-colors duration-300 border-b border-white/40 dark:border-slate-700/60
+                   bg-gradient-to-b from-[#A9CFE0]/30 to-white/80 dark:from-[#1F4555]/80 dark:to-[#0f172a]/90 
+                   backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
+        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap justify-between items-center gap-4">
             
             <!-- Logo & Title -->
@@ -36,40 +39,33 @@
                 <div>
                     <h1 class="text-lg md:text-xl font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
                         داشبورد پایش سبد پروژه‌ها
-                        <span class="text-[11px] font-sans font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-400/30">PMO Live</span>
+                        <span class="text-[11px] font-sans font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100/50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/40 dark:border-emerald-400/30 backdrop-blur-sm">PMO Live</span>
                     </h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-300/80 mt-0.5">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300/80 mt-0.5 font-medium">دفتر مدیریت پروژه (PMO) – پایش یکپارچه عملکرد</p>
                 </div>
             </div>
 
             <!-- Action Buttons & Status Details -->
             <div class="flex flex-col items-end gap-1.5">
                 
-                <!-- Buttons Row -->
                 <div class="flex items-center gap-2">
-                    <!-- دکمه سوییچ تم (Light / Dark) -->
-                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-200 transition-all duration-200 border border-slate-200 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
-                        <!-- Sun Icon (Show in Dark) -->
+                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-white/40 dark:bg-slate-800 hover:bg-white/60 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-white/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg id="sunIcon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
-                        <!-- Moon Icon (Show in Light) -->
                         <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
                     </button>
 
-                    <!-- دکمه مخفی Input برای آپلود اکسل -->
                     <input type="file" id="manualFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleManualFileUpload(event)" />
 
-                    <!-- دکمه آیکونی آپلود دستی با تول‌تیپ -->
-                    <button onclick="document.getElementById('manualFileInput').click()" title="آپلود دستی فایل اکسل" class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                    <button onclick="document.getElementById('manualFileInput').click()" title="آپلود دستی فایل اکسل" class="p-2 rounded-full bg-white/40 dark:bg-slate-800 hover:bg-white/60 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-white/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
                     </button>
 
-                    <!-- دکمه کپسولی Refresh -->
                     <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800 dark:bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-transparent dark:border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
                         <span class="font-sans font-semibold text-xs tracking-wide">Refresh</span>
                         <svg class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,8 +74,7 @@
                     </button>
                 </div>
 
-                <!-- وضعیت دو خطی: Server و Updated -->
-                <div class="flex flex-col gap-1 text-[10px] text-slate-600 dark:text-slate-300 font-mono tracking-tight bg-slate-100 dark:bg-black/30 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/5 shadow-inner" dir="ltr">
+                <div class="flex flex-col gap-1 text-[10px] text-slate-600 dark:text-slate-300 font-mono tracking-tight bg-white/30 dark:bg-black/30 px-3 py-1.5 rounded-lg border border-white/30 dark:border-white/5 shadow-inner backdrop-blur-sm" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span class="font-bold text-slate-700 dark:text-slate-100">Server:</span>
@@ -91,38 +86,37 @@
                         <span id="lastUpdateText" class="text-slate-500 dark:text-slate-300">--:--</span>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </header>
 
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
 
-        <!-- Top KPI Cards (5 Columns Grid) -->
+        <!-- Top KPI Cards -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <!-- (کارت‌ها به دلیل ضیق وقت، ساختار قبلی را حفظ کرده‌اند اما در تم جدید زیباتر به نظر می‌رسند) -->
+            <div class="bg-white/70 dark:bg-slate-800/80 border border-white dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div class="text-slate-500 dark:text-slate-400 text-xs font-medium">تعداد کل پروژه‌ها</div>
                 <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500">(Total Projects)</div>
                 <div id="kpiTotalProjects" class="text-2xl font-black text-slate-800 dark:text-white mt-1">--</div>
             </div>
-            <div class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white/70 dark:bg-slate-800/80 border border-white dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div class="text-slate-500 dark:text-slate-400 text-xs font-medium">میانگین پیشرفت برنامه‌ای</div>
                 <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500">(Average Planned Progress)</div>
                 <div id="kpiAvgPlan" class="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">--%</div>
             </div>
-            <div class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white/70 dark:bg-slate-800/80 border border-white dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div class="text-slate-500 dark:text-slate-400 text-xs font-medium">میانگین پیشرفت واقعی</div>
                 <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500">(Average Actual Progress)</div>
                 <div id="kpiAvgActual" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">--%</div>
             </div>
-            <div class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white/70 dark:bg-slate-800/80 border border-white dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div class="text-slate-500 dark:text-slate-400 text-xs font-medium">شاخص انحراف کل</div>
                 <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500">(Overall Schedule Variance)</div>
                 <div id="kpiVariance" class="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">--%</div>
             </div>
-            <div class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white/70 dark:bg-slate-800/80 border border-white dark:border-slate-700/60 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                 <div class="text-slate-500 dark:text-slate-400 text-xs font-medium">شاخص عملکرد زمانی کل</div>
                 <div class="text-[10px] font-mono text-slate-400 dark:text-slate-500">(Overall SPI / EVM)</div>
                 <div id="kpiEvm" class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">--</div>
@@ -130,277 +124,20 @@
         </section>
 
         <!-- Projects Table Card -->
-        <section class="bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 rounded-2xl shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-200/80 dark:border-slate-700/60 flex flex-wrap justify-between items-center gap-3">
+        <section class="bg-white/60 dark:bg-slate-800/80 border border-white/50 dark:border-slate-700/60 rounded-2xl shadow-sm overflow-hidden backdrop-blur-sm">
+            <div class="p-5 border-b border-white/50 dark:border-slate-700/60 flex flex-wrap justify-between items-center gap-3">
                 <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <span>فهرست تفصیلی پروژه‌ها</span>
                     <span class="text-xs text-slate-400 font-normal font-mono">(Projects Detail List)</span>
-                    <span id="tableCountBadge" class="text-xs font-normal px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">-- پروژه</span>
+                    <span id="tableCountBadge" class="text-xs font-normal px-2.5 py-0.5 rounded-full bg-white/50 dark:bg-slate-700 text-slate-600 dark:text-slate-300">-- پروژه</span>
                 </h2>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-xs">
-                    <thead class="bg-slate-100/90 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-b border-slate-200/80 dark:border-slate-700/60">
+                    <thead class="bg-slate-100/50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 border-b border-white/50 dark:border-slate-700/60">
                         <tr>
-                            <th class="py-3.5 px-4 font-semibold">
-                                <div>ردیف</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Row)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold">
-                                <div>شرکت</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Company)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold">
-                                <div>نام پروژه</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Project Name)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold">
-                                <div>مدیر پروژه</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Project Manager)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold text-center">
-                                <div>پیشرفت برنامه‌ای</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Planned Progress)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold text-center">
-                                <div>پیشرفت واقعی</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Actual Progress)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold text-center">
-                                <div>میزان انحراف</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(Variance)</div>
-                            </th>
-                            <th class="py-3.5 px-4 font-semibold text-center" title="شاخص عملکرد زمانی (Actual / Plan)">
-                                <div>شاخص بازدهی زمانی</div>
-                                <div class="text-[9px] font-mono text-slate-400 dark:text-slate-500 font-normal">(E.V.M / SPI)</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="projectsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/40 text-slate-700 dark:text-slate-200">
-                        <!-- ردیف‌های جدول به صورت داینامیک اضافه می‌شوند -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-400 dark:text-slate-500 font-mono">
-        DEKA PMO Portfolio Dashboard • System Operational
-    </footer>
-
-    <!-- Logic & Data Script -->
-    <script>
-        const FALLBACK_PROJECTS = [
-            { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, variance: "-7.0", evm: "0.92" },
-            { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, variance: "+4.0", evm: "1.07" },
-            { id: 3, company: "بازرگانی", name: "توسعه بازارهای صادراتی", pm: "مهندس قادری", plan: 40, actual: 32, variance: "-8.0", evm: "0.80" },
-            { id: 4, company: "توسعه صنایع", name: "طرح جامع ارتقای ایمنی", pm: "مهندس کاظمی", plan: 95, actual: 95, variance: "0.0", evm: "1.00" },
-            { id: 5, company: "پشتیبانی و لجستیک", name: "هوشمندسازی زنجیره تامین", pm: "مهندس نوری", plan: 50, actual: 45, variance: "-5.0", evm: "0.90" }
-        ];
-
-        let currentProjects = [...FALLBACK_PROJECTS];
-
-        // مدیریت حالت تم تیره / روشن
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                html.classList.add('light');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.remove('light');
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        // نرمال‌سازی درصدها
-        function normalizePercent(val) {
-            if (val === null || val === undefined || val === '') return 0;
-            let num = typeof val === 'string' ? parseFloat(val.replace('%', '').trim()) : parseFloat(val);
-            if (isNaN(num)) return 0;
-            if (num > 0 && num <= 1) {
-                num = num * 100;
-            }
-            return Math.round(num * 10) / 10;
-        }
-
-        function updateLastUpdated() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = now.toLocaleDateString('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            const el = document.getElementById('lastUpdateText');
-            if (el) el.textContent = `${dateStr} ${timeStr}`;
-        }
-
-        function parseRawData(jsonData) {
-            return jsonData.map((row, idx) => {
-                const plan = normalizePercent(row['برنامه'] ?? row['Plan']);
-                const actual = normalizePercent(row['واقعی'] ?? row['Actual']);
-                
-                const diff = (actual - plan).toFixed(1);
-                
-                let evmVal = "1.00";
-                if (plan > 0) {
-                    evmVal = (actual / plan).toFixed(2);
-                } else if (actual > 0) {
-                    evmVal = "> 1.00";
-                }
-
-                return {
-                    id: idx + 1,
-                    company: row['شرکت'] || row['Company'] || '-',
-                    name: row['نام پروژه'] || row['Name'] || row['پروژه'] || '-',
-                    pm: row['مدیر پروژه'] || row['PM'] || '-',
-                    plan: plan,
-                    actual: actual,
-                    variance: diff,
-                    evm: evmVal
-                };
-            });
-        }
-
-        function renderDashboard(projects, statusText = "Connected", statusType = "online") {
-            const serverEl = document.getElementById('serverStatusText');
-            const dotEl = document.getElementById('statusDot');
-            
-            if (serverEl) {
-                serverEl.textContent = statusText;
-                if (statusType === "online") serverEl.className = "text-emerald-600 dark:text-emerald-400 font-semibold";
-                else if (statusType === "local") serverEl.className = "text-sky-600 dark:text-sky-400 font-semibold";
-                else serverEl.className = "text-amber-600 dark:text-amber-400 font-semibold";
-            }
-            if (dotEl) {
-                let dotBg = 'bg-emerald-500 animate-pulse';
-                if (statusType === 'local') dotBg = 'bg-sky-500';
-                else if (statusType === 'offline') dotBg = 'bg-amber-500';
-                dotEl.className = `w-1.5 h-1.5 rounded-full ${dotBg}`;
-            }
-
-            const total = projects.length;
-            const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
-            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
-            const totalVariance = (avgActual - avgPlan).toFixed(1);
-
-            const overallEvm = avgPlan > 0 ? (avgActual / avgPlan).toFixed(2) : "1.00";
-
-            document.getElementById('kpiTotalProjects').textContent = total;
-            document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
-            document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
-            
-            const varEl = document.getElementById('kpiVariance');
-            varEl.textContent = `${totalVariance > 0 ? '+' : ''}${totalVariance}%`;
-            varEl.className = `text-2xl font-black mt-1 ${totalVariance >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`;
-
-            const evmEl = document.getElementById('kpiEvm');
-            evmEl.textContent = overallEvm;
-            const evmNum = parseFloat(overallEvm);
-            if (evmNum >= 1.0) evmEl.className = "text-2xl font-black mt-1 text-emerald-600 dark:text-emerald-400";
-            else if (evmNum >= 0.85) evmEl.className = "text-2xl font-black mt-1 text-amber-600 dark:text-amber-400";
-            else evmEl.className = "text-2xl font-black mt-1 text-rose-600 dark:text-rose-400";
-
-            document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
-
-            const tbody = document.getElementById('projectsTableBody');
-            tbody.innerHTML = '';
-
-            projects.forEach((proj, index) => {
-                const planVal = parseFloat(proj.plan) || 0;
-                const actVal = parseFloat(proj.actual) || 0;
-                const diff = parseFloat(proj.variance) || 0;
-                const evmNum = parseFloat(proj.evm);
-                
-                let badgeColor = "bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30";
-                if (diff < -5) badgeColor = "bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30";
-                else if (diff < 0) badgeColor = "bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30";
-
-                let evmColorClass = "text-slate-600 dark:text-slate-300";
-                if (!isNaN(evmNum)) {
-                    if (evmNum >= 1.0) evmColorClass = "text-emerald-600 dark:text-emerald-400 font-bold";
-                    else if (evmNum >= 0.85) evmColorClass = "text-amber-600 dark:text-amber-400 font-bold";
-                    else evmColorClass = "text-rose-600 dark:text-rose-400 font-bold";
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition duration-150";
-                tr.innerHTML = `
-                    <td class="py-3 px-4 font-mono text-slate-400 dark:text-slate-400">${index + 1}</td>
-                    <td class="py-3 px-4 font-semibold text-slate-800 dark:text-white">${proj.company || '-'}</td>
-                    <td class="py-3 px-4">${proj.name || '-'}</td>
-                    <td class="py-3 px-4 text-slate-600 dark:text-slate-300">${proj.pm || '-'}</td>
-                    <td class="py-3 px-4 text-center font-mono text-blue-600 dark:text-blue-300">${planVal}%</td>
-                    <td class="py-3 px-4 text-center font-mono text-emerald-600 dark:text-emerald-300">${actVal}%</td>
-                    <td class="py-3 px-4 text-center">
-                        <span class="px-2.5 py-0.5 text-[11px] rounded-full font-mono ${badgeColor}">
-                            ${diff > 0 ? '+' : ''}${diff}%
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 text-center font-mono ${evmColorClass}">${proj.evm}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            updateLastUpdated();
-        }
-
-        async function fetchLiveExcel() {
-            try {
-                const response = await fetch('dashboard.xlsx?t=' + Date.now());
-                if (!response.ok) throw new Error('Excel not found');
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const sheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-                if (jsonData && jsonData.length > 0) {
-                    currentProjects = parseRawData(jsonData);
-                    renderDashboard(currentProjects, "Connected", "online");
-                }
-            } catch (err) {
-                console.log("خطا در دریافت اکسل؛ استفاده از داده‌های پیش‌فرض:", err);
-                renderDashboard(currentProjects, "Offline", "offline");
-            }
-        }
-
-        function handleManualFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[firstSheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-                    if (jsonData && jsonData.length > 0) {
-                        currentProjects = parseRawData(jsonData);
-                        renderDashboard(currentProjects, "Local File", "local");
-                    }
-                } catch (err) {
-                    alert("خطا در پردازش فایل اکسل. لطفاً از ساختار فایل مطمئن شوید.");
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function refreshData() {
-            const statusEl = document.getElementById('serverStatusText');
-            if (statusEl) statusEl.textContent = "Syncing...";
-            fetchLiveExcel();
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            renderDashboard(FALLBACK_PROJECTS, "Connected", "online");
-            fetchLiveExcel();
-        });
-    </script>
-</body>
-</html>
+                            <th class="py-3.5 px-4 font-semibold">ردیف<div class="text-[9px] font-mono font-normal opacity-70">(Row)</div></th>
+                            <th class="py-3.5 px-4 font-semibold">شرکت<div class="text-[9px] font-mono font-normal opacity-70">(Company)</div></th>
+                            <th class="py-3.5 px-4 font-semibold">نام پروژه<div class="text-[9px] font-mono font-normal opacity-70">(Project Name)</div></th>
+                            <th class="py-3.5 px-4 font-semibold">مدیر پروژه<div class="text-[9px] font
