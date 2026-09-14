@@ -28,7 +28,6 @@
             <!-- Logo & Title -->
             <div class="flex items-center gap-4">
                 <div class="shrink-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
-                    <!-- ?v=3 برای شکستن کش + سایز درشت و خوانا -->
                     <img src="logo.png?v=3" alt="PMO Logo" class="h-16 md:h-20 w-auto object-contain transition-all duration-200" onerror="this.style.display='none'" />
                 </div>
                 <div>
@@ -40,9 +39,9 @@
                 </div>
             </div>
 
-            <!-- Action & Sub-Status Column (Right Side Layout) -->
+            <!-- Action & Sub-Status Column (Stacked Layout) -->
             <div class="flex flex-col items-end gap-1.5">
-                <!-- دکمه کپسولی Refresh مشابه عکس ارسالی -->
+                <!-- دکمه کپسولی Refresh -->
                 <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
                     <span class="font-sans font-semibold text-xs tracking-wide">Refresh</span>
                     <svg class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,17 +49,17 @@
                     </svg>
                 </button>
 
-                <!-- وضعیت اتصال و آخرین به‌روزرسانی (کاملاً انگلیسی، فونت ریز و زیر دکمه) -->
-                <div class="flex items-center gap-2 text-[10px] text-slate-300 font-mono tracking-tight bg-black/30 px-2.5 py-1 rounded-md border border-white/5 shadow-inner" dir="ltr">
+                <!-- وضعیت دو خطی: خط اول Server و خط دوم Updated -->
+                <div class="flex flex-col gap-1 text-[10px] text-slate-300 font-mono tracking-tight bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 shadow-inner" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span class="text-slate-400">Server:</span>
+                        <span class="font-bold text-slate-100">Server:</span>
                         <span id="serverStatusText" class="text-emerald-400 font-semibold">Connected</span>
                     </div>
-                    <span class="text-slate-600">|</span>
-                    <div class="flex items-center gap-1">
-                        <span class="text-slate-400">Updated:</span>
-                        <span id="lastUpdateText" class="text-slate-300 font-mono">--:--</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 opacity-0"></span>
+                        <span class="font-bold text-slate-100">Updated:</span>
+                        <span id="lastUpdateText" class="text-slate-300">--:--</span>
                     </div>
                 </div>
             </div>
@@ -141,7 +140,7 @@
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // ثبت ساعت و تاریخ شمسی با فرمت مرتب انگلیسی/مونو
+        // ثبت ساعت و تاریخ شمسی با فونت مرتب انگلیسی/مونو
         function updateLastUpdated() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -152,7 +151,6 @@
 
         // رندر کردن جدول و KPIها
         function renderDashboard(projects, statusText = "Connected", isOnline = true) {
-            // آپدیت وضعیت سرور به انگلیسی
             const serverEl = document.getElementById('serverStatusText');
             const dotEl = document.getElementById('statusDot');
             if (serverEl) {
@@ -163,15 +161,14 @@
                 dotEl.className = `w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`;
             }
 
-            // محاسبات KPI
             const total = projects.length;
             const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
-            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
-            const variance = (avgActual - avgPlan).toFixed(1);
-
-            document.getElementById('kpiTotalProjects').textContent = total;
-            document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
+            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / totalAvgPlan').textContent = `${avgPlan}%`;
             document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
+            
+            const varEl = document.getElementById('kpiVariance');
+            varEl.textContent = `${variance > 0 ? '+' : ''}${variance}%`;
+            varEl.className = `text-avgActual}%`;
             
             const varEl = document.getElementById('kpiVariance');
             varEl.textContent = `${variance > 0 ? '+' : ''}${variance}%`;
@@ -179,7 +176,6 @@
 
             document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
 
-            // رندر جدول
             const tbody = document.getElementById('projectsTableBody');
             tbody.innerHTML = '';
 
@@ -214,7 +210,6 @@
             updateLastUpdated();
         }
 
-        // واکشی داده از اکسل مخزن
         async function fetchLiveExcel() {
             try {
                 const response = await fetch('dashboard.xlsx?t=' + Date.now());
@@ -250,7 +245,6 @@
             fetchLiveExcel();
         }
 
-        // راه‌اندازی اولیه
         window.addEventListener('DOMContentLoaded', () => {
             renderDashboard(FALLBACK_PROJECTS, "Connected", true);
             fetchLiveExcel();
