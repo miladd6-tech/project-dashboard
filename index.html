@@ -85,23 +85,33 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
 
-        <!-- Top KPI Cards -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
+        <!-- Top KPI Cards (5 Columns Grid) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
                 <div class="text-slate-400 text-xs font-medium">تعداد کل پروژه‌ها</div>
-                <div id="kpiTotalProjects" class="text-2xl font-black text-white mt-2">--</div>
+                <div class="text-[10px] font-mono text-slate-500">(Total Projects)</div>
+                <div id="kpiTotalProjects" class="text-2xl font-black text-white mt-1">--</div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
-                <div class="text-slate-400 text-xs font-medium">میانگین پیشرفت برنامه‌ای (Plan)</div>
-                <div id="kpiAvgPlan" class="text-2xl font-black text-blue-400 mt-2">--%</div>
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+                <div class="text-slate-400 text-xs font-medium">میانگین پیشرفت برنامه‌ای</div>
+                <div class="text-[10px] font-mono text-slate-500">(Average Planned Progress)</div>
+                <div id="kpiAvgPlan" class="text-2xl font-black text-blue-400 mt-1">--%</div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
-                <div class="text-slate-400 text-xs font-medium">میانگین پیشرفت واقعی (Actual)</div>
-                <div id="kpiAvgActual" class="text-2xl font-black text-emerald-400 mt-2">--%</div>
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+                <div class="text-slate-400 text-xs font-medium">میانگین پیشرفت واقعی</div>
+                <div class="text-[10px] font-mono text-slate-500">(Average Actual Progress)</div>
+                <div id="kpiAvgActual" class="text-2xl font-black text-emerald-400 mt-1">--%</div>
             </div>
-            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-5 shadow-sm">
-                <div class="text-slate-400 text-xs font-medium">شاخص انحراف کل (Variance)</div>
-                <div id="kpiVariance" class="text-2xl font-black text-amber-400 mt-2">--%</div>
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+                <div class="text-slate-400 text-xs font-medium">شاخص انحراف کل</div>
+                <div class="text-[10px] font-mono text-slate-500">(Overall Schedule Variance)</div>
+                <div id="kpiVariance" class="text-2xl font-black text-amber-400 mt-1">--%</div>
+            </div>
+            <!-- کارت جدید شاخص EVM / SPI -->
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 shadow-sm">
+                <div class="text-slate-400 text-xs font-medium">شاخص عملکرد زمانی کل</div>
+                <div class="text-[10px] font-mono text-slate-500">(Overall SPI / EVM)</div>
+                <div id="kpiEvm" class="text-2xl font-black text-indigo-400 mt-1">--</div>
             </div>
         </section>
 
@@ -110,6 +120,7 @@
             <div class="p-5 border-b border-slate-700/60 flex flex-wrap justify-between items-center gap-3">
                 <h2 class="text-base font-bold text-white flex items-center gap-2">
                     <span>فهرست تفصیلی پروژه‌ها</span>
+                    <span class="text-xs text-slate-400 font-normal font-mono">(Projects Detail List)</span>
                     <span id="tableCountBadge" class="text-xs font-normal px-2 py-0.5 rounded-full bg-slate-700 text-slate-300">-- پروژه</span>
                 </h2>
             </div>
@@ -118,14 +129,38 @@
                 <table class="w-full text-right text-xs">
                     <thead class="bg-slate-900/60 text-slate-400 border-b border-slate-700/60">
                         <tr>
-                            <th class="py-3.5 px-4 font-semibold">ردیف</th>
-                            <th class="py-3.5 px-4 font-semibold">شرکت</th>
-                            <th class="py-3.5 px-4 font-semibold">نام پروژه</th>
-                            <th class="py-3.5 px-4 font-semibold">مدیر پروژه</th>
-                            <th class="py-3.5 px-4 font-semibold text-center">پیشرفت برنامه‌ای</th>
-                            <th class="py-3.5 px-4 font-semibold text-center">پیشرفت واقعی</th>
-                            <th class="py-3.5 px-4 font-semibold text-center">میزان انحراف</th>
-                            <th class="py-3.5 px-4 font-semibold text-center" title="شاخص عملکرد زمانی (Actual / Plan)">E.V.M (SPI)</th>
+                            <th class="py-3.5 px-4 font-semibold">
+                                <div>ردیف</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Row)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold">
+                                <div>شرکت</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Company)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold">
+                                <div>نام پروژه</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Project Name)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold">
+                                <div>مدیر پروژه</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Project Manager)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold text-center">
+                                <div>پیشرفت برنامه‌ای</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Planned Progress)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold text-center">
+                                <div>پیشرفت واقعی</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Actual Progress)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold text-center">
+                                <div>میزان انحراف</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(Variance)</div>
+                            </th>
+                            <th class="py-3.5 px-4 font-semibold text-center" title="شاخص عملکرد زمانی (Actual / Plan)">
+                                <div>شاخص بازدهی زمانی</div>
+                                <div class="text-[9px] font-mono text-slate-500 font-normal">(E.V.M / SPI)</div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="projectsTableBody" class="divide-y divide-slate-700/40 text-slate-200">
@@ -154,7 +189,7 @@
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // نرمال‌سازی هوشمند درصدها (پشتیبانی از اعداد اعشاری خام بین 0 و 1 یا اعداد کامل)
+        // نرمال‌سازی هوشمند درصدها
         function normalizePercent(val) {
             if (val === null || val === undefined || val === '') return 0;
             let num = typeof val === 'string' ? parseFloat(val.replace('%', '').trim()) : parseFloat(val);
@@ -173,16 +208,16 @@
             if (el) el.textContent = `${dateStr} ${timeStr}`;
         }
 
-        // تجزیه و محاسبه هوشمند داده‌ها (محاسبه خودکار واریانس و شاخص EVM/SPI)
+        // تجزیه و محاسبه هوشمند داده‌ها
         function parseRawData(jsonData) {
             return jsonData.map((row, idx) => {
                 const plan = normalizePercent(row['برنامه'] ?? row['Plan']);
                 const actual = normalizePercent(row['واقعی'] ?? row['Actual']);
                 
-                // محاسبه خودکار واریانس (Actual - Plan)
+                // محاسبه خودکار واریانس
                 const diff = (actual - plan).toFixed(1);
                 
-                // محاسبه خودکار شاخص EVM / SPI (Actual / Plan)
+                // محاسبه خودکار شاخص EVM / SPI
                 let evmVal = "1.00";
                 if (plan > 0) {
                     evmVal = (actual / plan).toFixed(2);
@@ -225,13 +260,24 @@
             const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
             const totalVariance = (avgActual - avgPlan).toFixed(1);
 
+            // محاسبه EVM کل portfolio
+            const overallEvm = avgPlan > 0 ? (avgActual / avgPlan).toFixed(2) : "1.00";
+
             document.getElementById('kpiTotalProjects').textContent = total;
             document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
             document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
             
             const varEl = document.getElementById('kpiVariance');
             varEl.textContent = `${totalVariance > 0 ? '+' : ''}${totalVariance}%`;
-            varEl.className = `text-2xl font-black mt-2 ${totalVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+            varEl.className = `text-2xl font-black mt-1 ${totalVariance >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+            // به‌روزرسانی کارت EVM
+            const evmEl = document.getElementById('kpiEvm');
+            evmEl.textContent = overallEvm;
+            const evmNum = parseFloat(overallEvm);
+            if (evmNum >= 1.0) evmEl.className = "text-2xl font-black mt-1 text-emerald-400";
+            else if (evmNum >= 0.85) evmEl.className = "text-2xl font-black mt-1 text-amber-400";
+            else evmEl.className = "text-2xl font-black mt-1 text-rose-400";
 
             document.getElementById('tableCountBadge').textContent = `${total} پروژه`;
 
@@ -249,7 +295,7 @@
                 if (diff < -5) badgeColor = "bg-rose-500/20 text-rose-400 border border-rose-500/30";
                 else if (diff < 0) badgeColor = "bg-amber-500/20 text-amber-400 border border-amber-500/30";
 
-                // رنگ‌بندی فونت شاخص EVM
+                // رنگ‌بندی شاخص EVM
                 let evmColorClass = "text-slate-300";
                 if (!isNaN(evmNum)) {
                     if (evmNum >= 1.0) evmColorClass = "text-emerald-400 font-bold";
@@ -286,7 +332,6 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                // همیشه شیت اول را به عنوان خلاصه وضعیت می‌خواند
                 const firstSheetName = workbook.SheetNames[0];
                 const sheet = workbook.Sheets[firstSheetName];
                 const jsonData = XLSX.utils.sheet_to_json(sheet);
@@ -296,7 +341,7 @@
                     renderDashboard(currentProjects, "Connected", "online");
                 }
             } catch (err) {
-                console.log("دریافت فایل از سرور با خطا مواجه شد؛ استفاده از داده‌های پیش‌فرض:", err);
+                console.log("خطا در دریافت اکسل؛ استفاده از داده‌های پیش‌فرض:", err);
                 renderDashboard(currentProjects, "Offline", "offline");
             }
         }
