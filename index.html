@@ -24,60 +24,56 @@
             font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* دقیقاً بر اساس استایل کپسول شیشه‌ای استوانه‌ای */
+        /* افکت شیشه‌ای استوانه‌ای بسیار ملایم و محو */
         .glass-capsule-light {
             background: linear-gradient(180deg, 
-                #4b6e82 0%, 
-                #8faec0 14%, 
-                #d3e6f0 32%, 
-                #ffffff 50%, 
-                #d3e6f0 68%, 
-                #8faec0 86%, 
-                #1d3d50 100%
+                rgba(226, 232, 240, 0.75) 0%, 
+                rgba(248, 250, 252, 0.92) 50%, 
+                rgba(218, 226, 236, 0.8) 100%
             );
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 
-                0 10px 25px -5px rgba(29, 61, 80, 0.25),
-                inset 0 1px 2px rgba(255, 255, 255, 0.9),
-                inset 0 -1px 3px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+                0 4px 20px -2px rgba(15, 23, 42, 0.06),
+                inset 0 1px 1px rgba(255, 255, 255, 0.9),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.04);
         }
 
-        /* نسخه تطبیق‌یافته برای حالت Dark Mode */
+        /* حالت تاریک با گرادیان حجمی بسیار ملایم */
         .dark .glass-capsule-dark {
             background: linear-gradient(180deg, 
-                #0f172a 0%, 
-                #1e293b 16%, 
-                #334155 35%, 
-                #64748b 50%, 
-                #334155 65%, 
-                #1e293b 84%, 
-                #020617 100%
+                rgba(30, 41, 59, 0.75) 0%, 
+                rgba(51, 65, 85, 0.6) 50%, 
+                rgba(15, 23, 42, 0.85) 100%
             );
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 
-                0 10px 25px -5px rgba(0, 0, 0, 0.6),
-                inset 0 1px 2px rgba(255, 255, 255, 0.25),
-                inset 0 -1px 3px rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+                0 6px 24px -2px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased bg-slate-100 dark:bg-[#070d18] text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- Header Wrapper (Floating Capsule) -->
+    <!-- Header Wrapper (Floating Subtle Capsule) -->
     <header class="sticky top-3 z-30 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all duration-300">
         <div class="glass-capsule-light dark:glass-capsule-dark rounded-full px-5 py-2.5 sm:py-3 flex flex-wrap justify-between items-center gap-3 transition-all duration-300">
             
             <!-- Logo & Title Section -->
             <div class="flex items-center gap-3 sm:gap-4">
-                <div class="shrink-0 drop-shadow-md">
+                <div class="shrink-0 drop-shadow-sm">
                     <img src="logo.png?v=5" alt="PMO Logo" class="h-10 sm:h-12 w-auto object-contain transition-all duration-200" onerror="this.style.display='none'" />
                 </div>
                 <div>
-                    <h1 class="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2 drop-shadow-sm">
+                    <h1 class="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
                         <span>داشبورد پایش سبد پروژه‌ها</span>
-                        <span class="text-[9px] font-sans font-bold px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-950 dark:text-emerald-300 border border-emerald-600/30">PMO Live</span>
+                        <span class="text-[9px] font-sans font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">PMO Live</span>
                     </h1>
-                    <p class="text-[10px] sm:text-[11px] text-slate-800 dark:text-slate-300 font-semibold opacity-90">دفتر مدیریت پروژه (PMO) – پایش یکپارچه سبد پروژه‌ها</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium">دفتر مدیریت پروژه (PMO) – پایش یکپارچه سبد پروژه‌ها</p>
                 </div>
             </div>
 
@@ -88,11 +84,11 @@
                 <div class="flex items-center gap-1.5">
                     
                     <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-white/70 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-all duration-200 border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg id="sunIcon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
-                        <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="moonIcon" class="w-4 h-4 block dark:hidden text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
                     </button>
@@ -101,7 +97,7 @@
                     <input type="file" id="manualFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleManualFileUpload(event)" />
 
                     <!-- Local Upload Button -->
-                    <button onclick="document.getElementById('manualFileInput').click()" title="بارگذاری دستی فایل اکسل" class="p-2 rounded-full bg-white/70 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 transition-all duration-200 border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                    <button onclick="document.getElementById('manualFileInput').click()" title="بارگذاری دستی فایل اکسل" class="p-2 rounded-full bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
@@ -110,23 +106,23 @@
                     <!-- Refresh Button -->
                     <button onclick="refreshData()" class="px-3.5 py-1.5 rounded-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-semibold transition-all duration-200 shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 border border-black/10 dark:border-white/10">
                         <span class="font-sans text-xs tracking-wide">Refresh</span>
-                        <svg id="refreshIcon" class="w-3.5 h-3.5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="refreshIcon" class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                     </button>
                 </div>
 
                 <!-- Server Status & Timestamp Pill -->
-                <div class="hidden sm:flex items-center gap-2.5 text-[10px] font-mono bg-white/70 dark:bg-black/40 px-3 py-1.5 rounded-full border border-white/80 dark:border-white/10 shadow-inner" dir="ltr">
+                <div class="hidden sm:flex items-center gap-2.5 text-[10px] font-mono bg-white/50 dark:bg-slate-950/40 px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-white/10" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="font-bold text-slate-800 dark:text-slate-300">Server:</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">Server:</span>
                         <span id="serverStatusText" class="text-emerald-700 dark:text-emerald-400 font-bold">Connected</span>
                     </div>
-                    <span class="text-slate-400 dark:text-slate-600">|</span>
+                    <span class="text-slate-300 dark:text-slate-700">|</span>
                     <div class="flex items-center gap-1">
-                        <span class="font-bold text-slate-800 dark:text-slate-300">Updated:</span>
-                        <span id="lastUpdateText" class="text-slate-600 dark:text-slate-400 font-semibold">--:--</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-300">Updated:</span>
+                        <span id="lastUpdateText" class="text-slate-500 dark:text-slate-400 font-medium">--:--</span>
                     </div>
                 </div>
 
@@ -141,7 +137,7 @@
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
             
             <!-- Card 1 -->
-            <div class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
+            <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-600 dark:text-slate-400">تعداد کل پروژه‌ها</span>
                     <span class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500">
@@ -153,7 +149,7 @@
             </div>
 
             <!-- Card 2 -->
-            <div class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
+            <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-600 dark:text-slate-400">میانگین پیشرفت برنامه‌ای</span>
                     <span class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
@@ -165,7 +161,7 @@
             </div>
 
             <!-- Card 3 -->
-            <div class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
+            <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-600 dark:text-slate-400">میانگین پیشرفت واقعی</span>
                     <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
@@ -177,7 +173,7 @@
             </div>
 
             <!-- Card 4 -->
-            <div class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
+            <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-600 dark:text-slate-400">شاخص انحراف کل</span>
                     <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
@@ -189,7 +185,7 @@
             </div>
 
             <!-- Card 5 -->
-            <div class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
+            <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl p-4 shadow-sm backdrop-blur-md hover:shadow-md transition duration-200">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-slate-600 dark:text-slate-400">شاخص بازدهی زمانی کل</span>
                     <span class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
@@ -203,7 +199,7 @@
         </section>
 
         <!-- Projects Table Section -->
-        <section class="bg-white/80 dark:bg-slate-900/80 border border-white dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden backdrop-blur-md">
+        <section class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden backdrop-blur-md">
             
             <div class="p-4 sm:p-5 border-b border-slate-200/70 dark:border-slate-800/80 flex flex-wrap justify-between items-center gap-3">
                 <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -364,7 +360,7 @@
                 let evmColor = evmNum >= 1.0 ? "text-emerald-600 dark:text-emerald-400 font-bold" : (evmNum >= 0.85 ? "text-amber-600 dark:text-amber-400" : "text-rose-600 dark:text-rose-400 font-bold");
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-[#A9CFE0]/20 dark:hover:bg-slate-800/40 transition duration-150";
+                tr.className = "hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition duration-150";
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 font-mono text-slate-400">${index + 1}</td>
                     <td class="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">${proj.company}</td>
