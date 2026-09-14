@@ -24,44 +24,36 @@
             font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* افکت شیشه‌ای استوانه‌ای بسیار ملایم و محو */
-        .glass-capsule-light {
-            background: linear-gradient(180deg, 
-                rgba(226, 232, 240, 0.75) 0%, 
-                rgba(248, 250, 252, 0.92) 50%, 
-                rgba(218, 226, 236, 0.8) 100%
-            );
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        /* استایل کپسول شیشه‌ای مدرن و شفاف */
+        .glass-capsule {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(240, 245, 250, 0.75) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 
-                0 4px 20px -2px rgba(15, 23, 42, 0.06),
-                inset 0 1px 1px rgba(255, 255, 255, 0.9),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.04);
+                0 10px 25px -5px rgba(15, 23, 42, 0.08),
+                inset 0 1px 2px rgba(255, 255, 255, 0.95),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.03);
         }
 
-        /* حالت تاریک با گرادیان حجمی بسیار ملایم */
-        .dark .glass-capsule-dark {
-            background: linear-gradient(180deg, 
-                rgba(30, 41, 59, 0.75) 0%, 
-                rgba(51, 65, 85, 0.6) 50%, 
-                rgba(15, 23, 42, 0.85) 100%
-            );
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* نسخه منطبق با تم تاریک */
+        .dark .glass-capsule {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 
-                0 6px 24px -2px rgba(0, 0, 0, 0.4),
-                inset 0 1px 1px rgba(255, 255, 255, 0.15),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+                0 10px 25px -5px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.18),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased bg-slate-100 dark:bg-[#070d18] text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- Header Wrapper (Floating Subtle Capsule) -->
+    <!-- Header Wrapper (Floating Frosted Capsule) -->
     <header class="sticky top-3 z-30 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all duration-300">
-        <div class="glass-capsule-light dark:glass-capsule-dark rounded-full px-5 py-2.5 sm:py-3 flex flex-wrap justify-between items-center gap-3 transition-all duration-300">
+        <div class="glass-capsule rounded-full px-5 py-2.5 sm:py-3 flex flex-wrap justify-between items-center gap-3 transition-all duration-300">
             
             <!-- Logo & Title Section -->
             <div class="flex items-center gap-3 sm:gap-4">
@@ -73,7 +65,7 @@
                         <span>داشبورد پایش سبد پروژه‌ها</span>
                         <span class="text-[9px] font-sans font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">PMO Live</span>
                     </h1>
-                    <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-medium">دفتر مدیریت پروژه (PMO) – پایش یکپارچه سبد پروژه‌ها</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 font-medium">دفتر مدیریت پروژه (PMO) – پایش یکپارچه سبد پروژه‌ها</p>
                 </div>
             </div>
 
@@ -84,7 +76,7 @@
                 <div class="flex items-center gap-1.5">
                     
                     <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                    <button onclick="toggleTheme()" id="themeToggleBtn" title="تغییر تم" class="p-2 rounded-full bg-white/70 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/60 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg id="sunIcon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
@@ -97,7 +89,7 @@
                     <input type="file" id="manualFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleManualFileUpload(event)" />
 
                     <!-- Local Upload Button -->
-                    <button onclick="document.getElementById('manualFileInput').click()" title="بارگذاری دستی فایل اکسل" class="p-2 rounded-full bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/50 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
+                    <button onclick="document.getElementById('manualFileInput').click()" title="بارگذاری دستی فایل اکسل" class="p-2 rounded-full bg-white/70 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all duration-200 border border-slate-200/60 dark:border-white/10 shadow-sm flex items-center justify-center cursor-pointer active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
@@ -113,7 +105,7 @@
                 </div>
 
                 <!-- Server Status & Timestamp Pill -->
-                <div class="hidden sm:flex items-center gap-2.5 text-[10px] font-mono bg-white/50 dark:bg-slate-950/40 px-3 py-1.5 rounded-full border border-slate-200/60 dark:border-white/10" dir="ltr">
+                <div class="hidden sm:flex items-center gap-2.5 text-[10px] font-mono bg-white/60 dark:bg-slate-950/50 px-3 py-1.5 rounded-full border border-slate-200/70 dark:border-white/10 shadow-inner" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span class="font-bold text-slate-700 dark:text-slate-300">Server:</span>
@@ -122,7 +114,7 @@
                     <span class="text-slate-300 dark:text-slate-700">|</span>
                     <div class="flex items-center gap-1">
                         <span class="font-bold text-slate-700 dark:text-slate-300">Updated:</span>
-                        <span id="lastUpdateText" class="text-slate-500 dark:text-slate-400 font-medium">--:--</span>
+                        <span id="lastUpdateText" class="text-slate-600 dark:text-slate-400 font-semibold">--:--</span>
                     </div>
                 </div>
 
