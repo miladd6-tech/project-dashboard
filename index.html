@@ -24,7 +24,7 @@
         <header class="bg-white shadow rounded-lg p-5 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">داشبورد جامع مدیریت پروژه‌ها</h1>
-                <p class="text-sm text-gray-500 mt-1">نمایش آنلاین و یکپارچه وضعیت پروژه‌ها از مخزن مرکزی</p>
+                <p class="text-sm text-gray-500 mt-1">نمایش آنلاین وضعیت و پیشرفت پروژه‌ها</p>
             </div>
             
             <div class="flex flex-wrap items-center gap-3">
@@ -32,7 +32,7 @@
                     آخرین به‌روزرسانی: <span id="lastUpdatedTime">-</span>
                 </span>
 
-                <!-- File Input (Optional Manual Upload) -->
+                <!-- Manual Upload -->
                 <label class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 text-sm font-semibold py-2 px-4 rounded cursor-pointer transition">
                     آپلود اکسل محلی
                     <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="hidden" />
@@ -45,62 +45,62 @@
             </div>
         </header>
 
-        <!-- Loading Spinner -->
+        <!-- Loading State -->
         <div id="loadingState" class="bg-white p-12 rounded-lg shadow text-center">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-3"></div>
-            <p class="text-gray-600 font-medium">در حال دریافت و تحلیل آخرین داده‌های پروژه از گیت‌هاب...</p>
+            <p class="text-gray-600 font-medium">در حال دریافت داده‌های پروژه...</p>
         </div>
 
-        <!-- Dashboard Content (Initially Hidden) -->
+        <!-- Dashboard Content -->
         <div id="dashboardContent" class="hidden space-y-6">
 
             <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-lg shadow border-r-4 border-blue-500">
                     <div class="text-sm font-medium text-gray-500">کل پروژه‌ها</div>
                     <div id="totalProjectsCount" class="text-2xl font-bold text-gray-800 mt-2">0</div>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow border-r-4 border-indigo-500">
-                    <div class="text-sm font-medium text-gray-500">میانگین پیشرفت برنامه‌ای (Plan)</div>
+                    <div class="text-sm font-medium text-gray-500">میانگین برنامه‌ای (Plan)</div>
                     <div id="avgPlanProgress" class="text-2xl font-bold text-indigo-600 mt-2">0%</div>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow border-r-4 border-green-500">
-                    <div class="text-sm font-medium text-gray-500">میانگین پیشرفت واقعی (Actual)</div>
+                    <div class="text-sm font-medium text-gray-500">میانگین واقعی (Actual)</div>
                     <div id="avgActualProgress" class="text-2xl font-bold text-green-600 mt-2">0%</div>
                 </div>
                 <div class="bg-white p-5 rounded-lg shadow border-r-4 border-amber-500">
-                    <div class="text-sm font-medium text-gray-500">انحراف کل (Variance)</div>
+                    <div class="text-sm font-medium text-gray-500">انحراف میانگین</div>
                     <div id="totalVariance" class="text-2xl font-bold mt-2">0%</div>
                 </div>
             </div>
 
-            <!-- Chart Section -->
+            <!-- Chart -->
             <div class="bg-white p-5 rounded-lg shadow">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">مقایسه پیشرفت برنامه‌ای و واقعی پروژه‌ها</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-4">نمودار مقایسه پیشرفت پروژه‌ها</h2>
                 <div class="relative h-80 w-full">
                     <canvas id="progressChart"></canvas>
                 </div>
             </div>
 
-            <!-- Table Section -->
+            <!-- Table -->
             <div class="bg-white shadow rounded-lg overflow-hidden">
-                <div class="px-5 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-gray-800">جدول وضعیت پروژه‌ها</h2>
+                <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-gray-800">ریز اطلاعات پروژه‌ها</h2>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-right">
                         <thead class="bg-gray-50 text-gray-700 text-xs font-bold uppercase">
                             <tr>
-                                <th class="px-4 py-3">نام پروژه</th>
-                                <th class="px-4 py-3">مدیر پروژه (PM)</th>
-                                <th class="px-4 py-3">برنامه‌ای (Plan)</th>
-                                <th class="px-4 py-3">واقعی (Actual)</th>
+                                <th class="px-4 py-3">شرکت</th>
+                                <th class="px-4 py-3">عنوان پروژه</th>
+                                <th class="px-4 py-3">مدیر پروژه</th>
+                                <th class="px-4 py-3">برنامه‌ای</th>
+                                <th class="px-4 py-3">واقعی</th>
                                 <th class="px-4 py-3">انحراف</th>
-                                <th class="px-4 py-3">ارزش حاصله (E.V.M)</th>
+                                <th class="px-4 py-3">E.V.M</th>
                             </tr>
                         </thead>
                         <tbody id="projectsTableBody" class="bg-white divide-y divide-gray-200 text-sm">
-                            <!-- Dynamic Content -->
                         </tbody>
                     </table>
                 </div>
@@ -110,8 +110,11 @@
     </div>
 
     <script>
-        // Central Repository Excel File Raw Link
-        const CENTRAL_EXCEL_URL = 'https://raw.githubusercontent.com/miladd6-tech/project-dashboard/main/dashboard.xlsx';
+        // Sources: jsDelivr CDN followed by GitHub Raw
+        const CENTRAL_EXCEL_URLS = [
+            'https://cdn.jsdelivr.net/gh/miladd6-tech/project-dashboard@main/dashboard.xlsx',
+            'https://raw.githubusercontent.com/miladd6-tech/project-dashboard/main/dashboard.xlsx'
+        ];
 
         let chartInstance = null;
 
@@ -120,28 +123,35 @@
             document.getElementById('excelFileInput').addEventListener('change', handleFileUpload);
         });
 
-        // Load data automatically from GitHub Repository
-        function loadCentralData() {
+        async function loadCentralData() {
             showLoading(true);
-            // Cache buster to ensure fresh data
-            const fetchUrl = CENTRAL_EXCEL_URL + '?t=' + new Date().getTime();
-            
-            fetch(fetchUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('فایل مرکز یافت نشد');
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    processWorkbookData(data, 'مرکز گیت‌هاب');
-                })
-                .catch(err => {
-                    console.warn('خطا در دریافت فایل اکسل مرکزی:', err);
-                    showLoading(false);
-                    alert('فایل اکسل مرکزی پیدا نشد. می‌توانید از طریق دکمه "آپلود اکسل محلی" فایل را بارگذاری کنید.');
-                });
+            let loaded = false;
+
+            for (const url of CENTRAL_EXCEL_URLS) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+                    const res = await fetch(url + '?nocache=' + Date.now(), { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (res.ok) {
+                        const buffer = await res.arrayBuffer();
+                        processWorkbookData(buffer, 'سرور مرکزی');
+                        loaded = true;
+                        break;
+                    }
+                } catch (e) {
+                    console.warn('تلاش ناموفق برای منبع:', url, e);
+                }
+            }
+
+            if (!loaded) {
+                showLoading(false);
+                alert('دریافت خودکار فایل اکسل انجام نشد. لطفاً از دکمه «آپلود اکسل محلی» فایل dashboard.xlsx را انتخاب نمایید.');
+            }
         }
 
-        // Handle manual file selection
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -157,11 +167,17 @@
         function processWorkbookData(arrayBuffer, sourceName) {
             try {
                 const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Select first sheet or specific "ریز اطلاعات" sheet
+                const sheetName = workbook.SheetNames.includes('ریز اطلاعات') ? 'ریز اطلاعات' : workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
                 const projects = parseProjectData(jsonData);
+                if (projects.length === 0) {
+                    throw new Error('داده‌ای در شیت یافت نشد');
+                }
+
                 renderDashboard(projects);
 
                 const now = new Date();
@@ -178,36 +194,41 @@
             } catch (error) {
                 console.error(error);
                 showLoading(false);
-                alert('خطا در پردازش فایل اکسل!');
+                alert('خطا در پردازش اطلاعات فایل اکسل!');
             }
         }
 
         function parseProjectData(rawData) {
             return rawData.map(row => {
-                const name = row['نام پروژه'] || row['پروژه'] || row['Project'] || 'بدون نام';
+                const company = row['Company'] || row['شرکت'] || '-';
+                const name = row['Title'] || row['Name'] || row['نام پروژه'] || row['پروژه'] || 'بدون عنوان';
                 const pm = row['PM'] || row['مدیر پروژه'] || '-';
-                const evm = row['E.V.M'] || row['EVM'] || '-';
+                const evm = row['E.V.M'] !== undefined && row['E.V.M'] !== '' ? Number(row['E.V.M']).toFixed(2) : '-';
 
                 let planVal = parseFloat(row['Plan'] || row['برنامه'] || 0);
                 let actualVal = parseFloat(row['Actual'] || row['واقعی'] || 0);
 
-                // Normalizing 0-1 decimals to percentages
                 if (planVal <= 1 && planVal > 0) planVal = planVal * 100;
                 if (actualVal <= 1 && actualVal > 0) actualVal = actualVal * 100;
 
+                planVal = Math.round(planVal * 10) / 10;
+                actualVal = Math.round(actualVal * 10) / 10;
+                const variance = Math.round((actualVal - planVal) * 10) / 10;
+
                 return {
+                    company: String(company).trim(),
                     name: String(name).trim(),
                     pm: String(pm).trim(),
-                    evm: String(evDashboard(projects) {
-            // Cards
-            document.getElementById('totalProjectsCount').textContent = projects.length;Val * 100) / 100,
-                    variance: Math.round((actualVal - planVal) * 100) / 100
+                    plan: planVal,
+                    actual: actualVal,
+                    variance: variance,
+                    evm: evm
                 };
-            }).filter(p => p.name !== 'بدون نام');
+            }).filter(p => p.name !== 'بدون عنوان' && p.name !== '');
         }
 
         function renderDashboard(projects) {
-            // Cards
+            // Stats
             document.getElementById('totalProjectsCount').textContent = projects.length;
             
             const totalPlan = projects.reduce((acc, p) => acc + p.plan, 0);
@@ -232,14 +253,15 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition';
                 tr.innerHTML = `
+                    <td class="px-4 py-3 font-medium text-gray-500">${p.company}</td>
                     <td class="px-4 py-3 font-semibold text-gray-800">${p.name}</td>
                     <td class="px-4 py-3 text-gray-600">${p.pm}</td>
-                    <td class="px-4 py-3 text-gray-600">${p.plan}%</td>
-                    <td class="px-4 py-3 text-gray-600 font-bold">${p.actual}%</td>
+                    <td class="px-4 py-3 text-indigo-600 font-medium">${p.plan}%</td>
+                    <td class="px-4 py-3 text-green-600 font-bold">${p.actual}%</td>
                     <td class="px-4 py-3 ${p.variance >= 0 ? 'text-green-600' : 'text-red-600'} font-semibold">
                         ${p.variance > 0 ? '+' : ''}${p.variance}%
                     </td>
-                    <td class="px-4 py-3 text-gray-600">${p.evm}</td>
+                    <td class="px-4 py-3 text-gray-700 font-mono">${p.evm}</td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -258,19 +280,19 @@
             chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: projects.map(p => p.name),
+                    labels: projects.map(p => p.name.length > 25 ? p.name.substring(0, 25) + '...' : p.name),
                     datasets: [
                         {
-                            label: 'پیشرفت برنامه‌ای (Plan)',
+                            label: 'پیشرفت برنامه‌ای (Plan %)',
                             data: projects.map(p => p.plan),
-                            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                            backgroundColor: 'rgba(99, 102, 241, 0.75)',
                             borderColor: 'rgb(99, 102, 241)',
                             borderWidth: 1
                         },
                         {
-                            label: 'پیشرفت واقعی (Actual)',
+                            label: 'پیشرفت واقعی (Actual %)',
                             data: projects.map(p => p.actual),
-                            backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.75)',
                             borderColor: 'rgb(34, 197, 94)',
                             borderWidth: 1
                         }
