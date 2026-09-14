@@ -39,7 +39,7 @@
                 </div>
             </div>
 
-            <!-- Action & Sub-Status Column (Stacked Layout) -->
+            <!-- Action & Sub-Status Column (Right Side Layout) -->
             <div class="flex flex-col items-end gap-1.5">
                 <!-- دکمه کپسولی Refresh -->
                 <button onclick="refreshData()" class="px-4 py-1.5 rounded-full bg-slate-800/90 hover:bg-slate-700 text-white text-xs font-medium transition-all duration-200 border border-white/10 shadow-sm flex items-center gap-2 cursor-pointer active:scale-95">
@@ -49,7 +49,7 @@
                     </svg>
                 </button>
 
-                <!-- وضعیت دو خطی: خط اول Server و خط دوم Updated -->
+                <!-- وضعیت دو خطی: Server و Updated کاملاً بولد و تراز شده -->
                 <div class="flex flex-col gap-1 text-[10px] text-slate-300 font-mono tracking-tight bg-black/30 px-3 py-1.5 rounded-lg border border-white/5 shadow-inner" dir="ltr">
                     <div class="flex items-center gap-1.5">
                         <span id="statusDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -114,7 +114,7 @@
                         </tr>
                     </thead>
                     <tbody id="projectsTableBody" class="divide-y divide-slate-700/40 text-slate-200">
-                        <!-- داینامیک پر می‌شود -->
+                        <!-- داینامیک لود می‌شود -->
                     </tbody>
                 </table>
             </div>
@@ -129,7 +129,7 @@
 
     <!-- Logic & Data Script -->
     <script>
-        // دیتای پشتیبان پیش‌فرض برای لود آنی
+        // دیتای پشتیبان اولیه
         const FALLBACK_PROJECTS = [
             { id: 1, company: "توسعه صنایع", name: "احداث خط جدید تولید", pm: "مهندس علوی", plan: 85, actual: 78, evm: "0.92" },
             { id: 2, company: "فناوری اطلاعات", name: "استقرار ERP یکپارچه", pm: "مهندس حسینی", plan: 60, actual: 64, evm: "1.06" },
@@ -140,7 +140,7 @@
 
         let currentProjects = [...FALLBACK_PROJECTS];
 
-        // ثبت ساعت و تاریخ شمسی با فونت مرتب انگلیسی/مونو
+        // به‌روزرسانی برچسب ساعت و تاریخ
         function updateLastUpdated() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -149,7 +149,7 @@
             if (el) el.textContent = `${dateStr} ${timeStr}`;
         }
 
-        // رندر کردن جدول و KPIها
+        // رندر کردن جدول و کارت‌های KPI
         function renderDashboard(projects, statusText = "Connected", isOnline = true) {
             const serverEl = document.getElementById('serverStatusText');
             const dotEl = document.getElementById('statusDot');
@@ -163,12 +163,12 @@
 
             const total = projects.length;
             const avgPlan = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.plan) || 0), 0) / total).toFixed(1) : 0;
-            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / totalAvgPlan').textContent = `${avgPlan}%`;
+            const avgActual = total > 0 ? (projects.reduce((acc, p) => acc + (parseFloat(p.actual) || 0), 0) / total).toFixed(1) : 0;
+            const variance = (avgActual - avgPlan).toFixed(1);
+
+            document.getElementById('kpiTotalProjects').textContent = total;
+            document.getElementById('kpiAvgPlan').textContent = `${avgPlan}%`;
             document.getElementById('kpiAvgActual').textContent = `${avgActual}%`;
-            
-            const varEl = document.getElementById('kpiVariance');
-            varEl.textContent = `${variance > 0 ? '+' : ''}${variance}%`;
-            varEl.className = `text-avgActual}%`;
             
             const varEl = document.getElementById('kpiVariance');
             varEl.textContent = `${variance > 0 ? '+' : ''}${variance}%`;
@@ -210,6 +210,7 @@
             updateLastUpdated();
         }
 
+        // واکشی اکسل از ریپازیتوری
         async function fetchLiveExcel() {
             try {
                 const response = await fetch('dashboard.xlsx?t=' + Date.now());
@@ -234,7 +235,7 @@
                     renderDashboard(currentProjects, "Connected", true);
                 }
             } catch (err) {
-                console.log("استفاده از حافظه کش به دلیل عدم واکشی فایل زنده:", err);
+                console.log("استفاده از حافظه دیتای اولیه به دلیل عدم دریافت مستقیم اکسل:", err);
                 renderDashboard(currentProjects, "Offline", false);
             }
         }
@@ -245,6 +246,7 @@
             fetchLiveExcel();
         }
 
+        // لود در هنگام بالا آمدن صفحه
         window.addEventListener('DOMContentLoaded', () => {
             renderDashboard(FALLBACK_PROJECTS, "Connected", true);
             fetchLiveExcel();
